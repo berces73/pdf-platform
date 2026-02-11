@@ -2,76 +2,13 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    
-    <!-- Primary SEO -->
-    <title>PDF Platform - Ücretsiz Online PDF Araçları | PDF Birleştir, Böl, Dönüştür</title>
-    <meta name="description" content="Güvenli ve ücretsiz PDF araçları ile PDF birleştir, böl, sıkıştır, JPG'ye çevir. Tarayıcı tabanlı işlem, dosyalarınız sunucuya yüklenmez. 100% gizlilik garantisi.">
-    <meta name="keywords" content="pdf birleştir, pdf böl, pdf sıkıştır, pdf dönüştür, jpg pdf, word pdf, online pdf, ücretsiz pdf, pdf araçları, güvenli pdf, serverless pdf">
-    <meta name="author" content="PDF Platform">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" href="https://pdf-platform.pages.dev/">
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://pdf-platform.pages.dev/">
-    <meta property="og:title" content="PDF Platform - Ücretsiz Online PDF Araçları | %100 Güvenli">
-    <meta property="og:description" content="PDF birleştir, böl, sıkıştır, dönüştür. Dosyalarınız sunucuya yüklenmez, tüm işlemler tarayıcınızda gerçekleşir.">
-    <meta property="og:image" content="https://pdf-platform.pages.dev/og-image.jpg">
-    <meta property="og:site_name" content="PDF Platform">
-    <meta property="og:locale" content="tr_TR">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="PDF Platform - Ücretsiz Online PDF Araçları">
-    <meta name="twitter:description" content="PDF birleştir, böl, sıkıştır, dönüştür. %100 güvenli, tarayıcı tabanlı.">
-    <meta name="twitter:image" content="https://pdf-platform.pages.dev/og-image.jpg">
-    
-    <!-- Additional SEO -->
-    <meta name="theme-color" content="#6366f1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="PDF Platform">
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Platform - Ücretsiz Online PDF Araçları</title>
+    <meta name="description" content="Güvenli ve ücretsiz PDF araçları. PDF birleştir, böl, sıkıştır. Dosyalarınız sunucuya yüklenmez.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Styles -->
     <link rel="stylesheet" href="style.css">
-    
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%236366f1' width='100' height='100' rx='20'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white' font-family='Arial'%3EP%3C/text%3E%3C/svg%3E">
-    
-    <!-- Schema.org -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "PDF Platform",
-      "description": "Ücretsiz online PDF araçları. PDF birleştir, böl, sıkıştır, dönüştür.",
-      "url": "https://pdf-platform.pages.dev",
-      "applicationCategory": "UtilitiesApplication",
-      "operatingSystem": "Web Browser",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "TRY"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "ratingCount": "3842"
-      }
-    }
-    </script>
 </head>
 <body>
     <!-- Cookie Banner -->
@@ -79,11 +16,11 @@
         <div class="cookie-content">
             <div class="cookie-text">
                 <i class="fas fa-cookie-bite"></i>
-                <p>Bu site deneyiminizi geliştirmek için çerezler kullanır. <a href="cookie-policy.html">Çerez Politikası</a></p>
+                <p>Bu site çerezler kullanır. <a href="cookie-policy.html">Çerez Politikası</a></p>
             </div>
             <div class="cookie-buttons">
-                <button class="btn btn-secondary btn-sm" id="cookieDecline">Reddet</button>
-                <button class="btn btn-primary btn-sm" id="cookieAccept">Kabul Et</button>
+                <button class="btn btn-secondary btn-sm" onclick="declineCookies()">Reddet</button>
+                <button class="btn btn-primary btn-sm" onclick="acceptCookies()">Kabul</button>
             </div>
         </div>
     </div>
@@ -101,9 +38,8 @@
                 </button>
                 <nav class="nav" id="mainNav">
                     <a href="#tools" class="nav-link">Araçlar</a>
-                    <a href="#features" class="nav-link">Özellikler</a>
                     <a href="about.html" class="nav-link">Hakkımızda</a>
-                    <a href="#articles" class="nav-link">Blog</a>
+                    <a href="articles/" class="nav-link">Blog</a>
                     <a href="faq.html" class="nav-link">SSS</a>
                     <a href="contact.html" class="nav-link">İletişim</a>
                 </nav>
@@ -115,40 +51,21 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1 class="hero-title">Dosyalarınız Hiçbir Zaman<br>Sunucuya Yüklenmez</h1>
-                <p class="hero-subtitle">PDF dosyalarınızı birleştirin, bölün, sıkıştırın ve dönüştürün. %100 tarayıcı tabanlı teknoloji ile dosyalarınız yalnızca sizin bilgisayarınızda işlenir.</p>
+                <h1 class="hero-title">Dosyalarınız Hiçbir Zaman Sunucuya Yüklenmez</h1>
+                <p class="hero-subtitle">PDF dosyalarınızı birleştirin, bölün, sıkıştırın. %100 tarayıcı tabanlı.</p>
                 <div class="hero-badges">
-                    <div class="badge">
-                        <i class="fas fa-shield-halved"></i>
-                        <span>Sunucusuz İşlem</span>
-                    </div>
-                    <div class="badge">
-                        <i class="fas fa-lock"></i>
-                        <span>%100 Gizlilik</span>
-                    </div>
-                    <div class="badge">
-                        <i class="fas fa-bolt"></i>
-                        <span>Anında Sonuç</span>
-                    </div>
+                    <div class="badge"><i class="fas fa-shield-halved"></i><span>Güvenli</span></div>
+                    <div class="badge"><i class="fas fa-bolt"></i><span>Hızlı</span></div>
+                    <div class="badge"><i class="fas fa-gift"></i><span>Ücretsiz</span></div>
                 </div>
-                <a href="#tools" class="btn btn-primary btn-hero">
-                    <i class="fas fa-arrow-down"></i>
-                    Araçları Keşfet
-                </a>
+                <a href="#tools" class="btn btn-primary btn-hero">Araçları Keşfet</a>
             </div>
         </div>
     </section>
 
     <!-- AdSense Top -->
-    <div class="ad-container ad-top">
-        <div class="container">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                 data-ad-slot="1234567890"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-        </div>
+    <div class="ad-container">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
     </div>
 
     <!-- Tools -->
@@ -159,13 +76,137 @@
                     <h2 class="section-title">PDF Araçları</h2>
                     <p class="section-subtitle">İhtiyacınız olan tüm PDF işlemlerini tek yerden yapın</p>
                 </div>
-                <div class="tools-grid" id="toolsGrid">
-                    <!-- Tools will be injected by JavaScript -->
+                <div class="tools-grid">
+                    <a href="pages.html?tool=merge" class="tool-card">
+                        <div class="tool-icon"><i class="fas fa-object-group"></i></div>
+                        <h3 class="tool-title">PDF Birleştir</h3>
+                        <p class="tool-description">Birden fazla PDF'yi birleştirin</p>
+                    </a>
+
+                    <a href="pages.html?tool=split" class="tool-card">
+                        <div class="tool-icon"><i class="fas fa-scissors"></i></div>
+                        <h3 class="tool-title">PDF Böl</h3>
+                        <p class="tool-description">PDF'yi sayfalara ayırın</p>
+                    </a>
+
+                    <a href="pages.html?tool=compress" class="tool-card">
+                        <div class="tool-icon"><i class="fas fa-compress"></i></div>
+                        <h3 class="tool-title">PDF Sıkıştır</h3>
+                        <p class="tool-description">Dosya boyutunu küçültün</p>
+                    </a>
+
+                    <a href="pages.html?tool=pdf-to-jpg" class="tool-card">
+                        <div class="tool-icon"><i class="fas fa-file-image"></i></div>
+                        <h3 class="tool-title">PDF'den JPG</h3>
+                        <p class="tool-description">PDF'yi resimlere çevirin</p>
+                    </a>
+
+                    <a href="pages.html?tool=jpg-to-pdf" class="tool-card">
+                        <div class="tool-icon"><i class="fas fa-file-pdf"></i></div>
+                        <h3 class="tool-title">JPG'den PDF</h3>
+                        <p class="tool-description">Resimleri PDF yapın</p>
+                    </a>
+
+                    <a href="pages.html?tool=rotate" class="tool-card">
+                        <div class="tool-icon"><i class="fas fa-rotate"></i></div>
+                        <h3 class="tool-title">PDF Döndür</h3>
+                        <p class="tool-description">Sayfaları döndürün</p>
+                    </a>
+
+                    <a href="pages.html?tool=delete-pages" class="tool-card">
+                        <div class="tool-icon"><i class="fas fa-trash-alt"></i></div>
+                        <h3 class="tool-title">Sayfa Sil</h3>
+                        <p class="tool-description">İstenmeyen sayfaları kaldırın</p>
+                    </a>
+
+                    <a href="pages.html?tool=reorder" class="tool-card">
+                        <div class="tool-icon"><i class="fas fa-sort"></i></div>
+                        <h3 class="tool-title">Sayfa Sırala</h3>
+                        <p class="tool-description">Sayfa sırasını değiştirin</p>
+                    </a>
+
+                    <a href="pages.html?tool=lock" class="tool-card">
+                        <div class="tool-icon"><i class="fas fa-lock"></i></div>
+                        <h3 class="tool-title">PDF Kilitle</h3>
+                        <p class="tool-description">Şifre ile koruyun</p>
+                    </a>
+
+                    <a href="pages.html?tool=add-qr" class="tool-card">
+                        <div class="tool-icon"><i class="fas fa-qrcode"></i></div>
+                        <h3 class="tool-title">QR Kod Ekle</h3>
+                        <p class="tool-description">PDF'ye QR kod ekleyin</p>
+                    </a>
                 </div>
             </div>
         </section>
 
-        <!-- Remaining sections from your original index.html -->
+        <!-- Security Section -->
+        <section class="security-section">
+            <div class="container">
+                <div class="security-content">
+                    <div class="security-icon"><i class="fas fa-shield-halved"></i></div>
+                    <h2>Neden Serverless PDF Araçları?</h2>
+                    <p class="lead">Dosyalarınız hiçbir zaman sunucuya yüklenmez.</p>
+                    <div class="security-features">
+                        <div class="security-feature">
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <h3>Tarayıcı Tabanlı</h3>
+                                <p>Tüm işlemler JavaScript ile tarayıcınızda gerçekleşir.</p>
+                            </div>
+                        </div>
+                        <div class="security-feature">
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <h3>Sıfır Veri Toplama</h3>
+                                <p>Dosyalarınızı göremeyiz, saklayamayız.</p>
+                            </div>
+                        </div>
+                        <div class="security-feature">
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <h3>Offline Çalışma</h3>
+                                <p>İnternet olmadan da çalışır.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AdSense Content -->
+        <div class="ad-container">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="9876543210" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        </div>
+
+        <!-- Articles -->
+        <section class="articles-section" id="articles">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Blog ve Rehberler</h2>
+                </div>
+                <div class="articles-grid">
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-object-group"></i></div>
+                        <h3><a href="articles/pdf-birlestirme.html">PDF Birleştirme Rehberi</a></h3>
+                        <p>Güvenli PDF birleştirme yöntemleri</p>
+                        <a href="articles/pdf-birlestirme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-compress"></i></div>
+                        <h3><a href="articles/pdf-sikistirma.html">PDF Sıkıştırma</a></h3>
+                        <p>Dosya boyutunu küçültme teknikleri</p>
+                        <a href="articles/pdf-sikistirma.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-file-image"></i></div>
+                        <h3><a href="articles/jpg-pdf-donusturme.html">JPG'den PDF'ye</a></h3>
+                        <p>Resim dönüştürme rehberi</p>
+                        <a href="articles/jpg-pdf-donusturme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
@@ -177,21 +218,12 @@
                         <i class="fas fa-file-pdf"></i>
                         <span>PDF Platform</span>
                     </div>
-                    <p>Güvenli ve hızlı PDF işlemleri.</p>
+                    <p>Güvenli PDF işlemleri</p>
                     <div class="security-badges">
                         <div class="security-badge">
                             <i class="fas fa-server"></i>
-                            <span>Dosyalarınız Sunucuya Yüklenmez</span>
+                            <span>Sunucusuz İşlem</span>
                         </div>
-                        <div class="security-badge">
-                            <i class="fas fa-desktop"></i>
-                            <span>Tüm İşlemler Tarayıcınızda</span>
-                        </div>
-                    </div>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
                     </div>
                 </div>
                 <div class="footer-section">
@@ -200,7 +232,6 @@
                         <li><a href="about.html">Hakkımızda</a></li>
                         <li><a href="contact.html">İletişim</a></li>
                         <li><a href="faq.html">SSS</a></li>
-                        <li><a href="articles/">Blog</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -208,75 +239,37 @@
                     <ul class="footer-links">
                         <li><a href="privacy.html">Gizlilik</a></li>
                         <li><a href="terms.html">Şartlar</a></li>
-                        <li><a href="cookie-policy.html">Çerezler</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Popüler Araçlar</h4>
-                    <ul class="footer-links">
-                        <li><a href="javascript:openTool('merge')">PDF Birleştir</a></li>
-                        <li><a href="javascript:openTool('compress')">PDF Sıkıştır</a></li>
-                        <li><a href="javascript:openTool('jpg-to-pdf')">JPG'den PDF</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 PDF Platform. Tüm hakları saklıdır.</p>
+                <p>&copy; 2026 PDF Platform</p>
             </div>
         </div>
     </footer>
 
-    <!-- Bottom Nav -->
-    <nav class="bottom-nav" id="bottomNav">
-        <a href="#tools" class="bottom-nav-item">
-            <i class="fas fa-tools"></i>
-            <span>Araçlar</span>
-        </a>
-        <a href="#features" class="bottom-nav-item">
-            <i class="fas fa-star"></i>
-            <span>Özellikler</span>
-        </a>
-        <a href="#articles" class="bottom-nav-item">
-            <i class="fas fa-book"></i>
-            <span>Blog</span>
-        </a>
-        <a href="contact.html" class="bottom-nav-item">
-            <i class="fas fa-envelope"></i>
-            <span>İletişim</span>
-        </a>
-    </nav>
-
-    <!-- Modal -->
-    <div class="modal" id="modal">
-        <div class="modal-overlay" id="modalOverlay"></div>
-        <div class="modal-content">
-            <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
-            <div class="modal-header">
-                <h3 id="modalTitle">İşlem</h3>
-            </div>
-            <div class="modal-body" id="modalBody"></div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <script src="script.js"></script>
-    
-    <!-- AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    
-    <!-- Service Worker -->
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js');
-            });
+        // Cookie Banner
+        function acceptCookies() {
+            localStorage.setItem('cookie_consent', 'accepted');
+            document.getElementById('cookieBanner').style.display = 'none';
         }
+        function declineCookies() {
+            localStorage.setItem('cookie_consent', 'declined');
+            document.getElementById('cookieBanner').style.display = 'none';
+        }
+        if (!localStorage.getItem('cookie_consent')) {
+            setTimeout(() => {
+                document.getElementById('cookieBanner').classList.add('show');
+            }, 1000);
+        }
+        
+        // Mobile Menu
+        document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+            document.getElementById('mainNav').classList.toggle('show');
+        });
     </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </body>
 </html>
