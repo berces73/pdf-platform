@@ -19,8 +19,8 @@
                 <p>Bu site çerezler kullanır. <a href="cookie-policy.html">Çerez Politikası</a></p>
             </div>
             <div class="cookie-buttons">
-                <button class="btn btn-secondary btn-sm" onclick="declineCookies()">Reddet</button>
-                <button class="btn btn-primary btn-sm" onclick="acceptCookies()">Kabul</button>
+                <button class="btn btn-secondary btn-sm" id="cookieDecline">Reddet</button>
+                <button class="btn btn-primary btn-sm" id="cookieAccept">Kabul</button>
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="/" class="logo">
+                <a href="index.html" class="logo">
                     <i class="fas fa-file-pdf"></i>
                     <span>PDF Platform</span>
                 </a>
@@ -39,7 +39,7 @@
                 <nav class="nav" id="mainNav">
                     <a href="#tools" class="nav-link">Araçlar</a>
                     <a href="about.html" class="nav-link">Hakkımızda</a>
-                    <a href="articles/" class="nav-link">Blog</a>
+                    <a href="#articles" class="nav-link">Blog</a>
                     <a href="faq.html" class="nav-link">SSS</a>
                     <a href="contact.html" class="nav-link">İletişim</a>
                 </nav>
@@ -184,25 +184,128 @@
             <div class="container">
                 <div class="section-header">
                     <h2 class="section-title">Blog ve Rehberler</h2>
+                    <p class="section-subtitle">PDF yönetiminde uzmanlaşmak için kapsamlı rehberler</p>
                 </div>
                 <div class="articles-grid">
                     <article class="article-card">
                         <div class="article-icon"><i class="fas fa-object-group"></i></div>
-                        <h3><a href="articles/pdf-birlestirme.html">PDF Birleştirme Rehberi</a></h3>
+                        <h3><a href="articles/pdf-birlestirme-rehberi.html">PDF Birleştirme Rehberi</a></h3>
                         <p>Güvenli PDF birleştirme yöntemleri</p>
-                        <a href="articles/pdf-birlestirme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                        <a href="articles/pdf-birlestirme-rehberi.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
                     </article>
                     <article class="article-card">
                         <div class="article-icon"><i class="fas fa-compress"></i></div>
-                        <h3><a href="articles/pdf-sikistirma.html">PDF Sıkıştırma</a></h3>
+                        <h3><a href="articles/pdf-sikistirma-rehberi.html">PDF Sıkıştırma</a></h3>
                         <p>Dosya boyutunu küçültme teknikleri</p>
-                        <a href="articles/pdf-sikistirma.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                        <a href="articles/pdf-sikistirma-rehberi.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-scissors"></i></div>
+                        <h3><a href="articles/pdf-bolme-teknikleri.html">PDF Bölme Teknikleri</a></h3>
+                        <p>Sayfaları ayırma rehberi</p>
+                        <a href="articles/pdf-bolme-teknikleri.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
                     </article>
                     <article class="article-card">
                         <div class="article-icon"><i class="fas fa-file-image"></i></div>
                         <h3><a href="articles/jpg-pdf-donusturme.html">JPG'den PDF'ye</a></h3>
                         <p>Resim dönüştürme rehberi</p>
                         <a href="articles/jpg-pdf-donusturme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-image"></i></div>
+                        <h3><a href="articles/pdf-jpg-donusturme.html">PDF'den JPG'ye</a></h3>
+                        <p>PDF'yi resim formatına çevirme</p>
+                        <a href="articles/pdf-jpg-donusturme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-lock"></i></div>
+                        <h3><a href="articles/pdf-sifreleme-guvenlik.html">PDF Şifreleme</a></h3>
+                        <p>Belgelerinizi güvenli tutun</p>
+                        <a href="articles/pdf-sifreleme-guvenlik.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-edit"></i></div>
+                        <h3><a href="articles/pdf-form-doldurma.html">PDF Form Doldurma</a></h3>
+                        <p>İnteraktif form kullanımı</p>
+                        <a href="articles/pdf-form-doldurma.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-rotate"></i></div>
+                        <h3><a href="articles/pdf-dondurme.html">PDF Döndürme</a></h3>
+                        <p>Sayfa yönlendirme teknikleri</p>
+                        <a href="articles/pdf-dondurme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-trash-alt"></i></div>
+                        <h3><a href="articles/pdf-sayfa-silme.html">Sayfa Silme</a></h3>
+                        <p>Gereksiz sayfaları kaldırın</p>
+                        <a href="articles/pdf-sayfa-silme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-sort"></i></div>
+                        <h3><a href="articles/pdf-sayfa-siralama.html">Sayfa Sıralama</a></h3>
+                        <p>Sayfaları yeniden düzenleyin</p>
+                        <a href="articles/pdf-sayfa-siralama.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-qrcode"></i></div>
+                        <h3><a href="articles/qr-kod-pdf.html">QR Kod ile PDF</a></h3>
+                        <p>QR kod oluşturma ve kullanımı</p>
+                        <a href="articles/qr-kod-pdf.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-info-circle"></i></div>
+                        <h3><a href="articles/pdf-metadata.html">PDF Metadata</a></h3>
+                        <p>Dosya bilgilerini düzenleme</p>
+                        <a href="articles/pdf-metadata.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-eye"></i></div>
+                        <h3><a href="articles/pdf-okunabilirlik.html">PDF Okunabilirlik</a></h3>
+                        <p>Daha okunabilir belgeler</p>
+                        <a href="articles/pdf-okunabilirlik.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-signature"></i></div>
+                        <h3><a href="articles/pdf-dijital-imza.html">Dijital İmza</a></h3>
+                        <p>Belgeleri dijital olarak imzalayın</p>
+                        <a href="articles/pdf-dijital-imza.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-layer-group"></i></div>
+                        <h3><a href="articles/pdf-toplu-isleme.html">Toplu İşleme</a></h3>
+                        <p>Birden fazla dosyayı aynı anda</p>
+                        <a href="articles/pdf-toplu-isleme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-archive"></i></div>
+                        <h3><a href="articles/pdf-arsivleme.html">PDF Arşivleme</a></h3>
+                        <p>Uzun dönem saklama için PDF/A</p>
+                        <a href="articles/pdf-arsivleme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-universal-access"></i></div>
+                        <h3><a href="articles/pdf-erisilebilirlik.html">PDF Erişilebilirlik</a></h3>
+                        <p>Herkes için erişilebilir PDF'ler</p>
+                        <a href="articles/pdf-erisilebilirlik.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-file-alt"></i></div>
+                        <h3><a href="articles/pdf-a-formati.html">PDF/A Formatı</a></h3>
+                        <p>Arşivleme için standart format</p>
+                        <a href="articles/pdf-a-formati.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <h3><a href="articles/mobilde-pdf-isleme.html">Mobilde PDF İşleme</a></h3>
+                        <p>Telefonunuzdan PDF yönetimi</p>
+                        <a href="articles/mobilde-pdf-isleme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                    <article class="article-card">
+                        <div class="article-icon"><i class="fas fa-print"></i></div>
+                        <h3><a href="articles/pdf-yazdirma.html">PDF Yazdırma</a></h3>
+                        <p>Mükemmel baskı sonuçları</p>
+                        <a href="articles/pdf-yazdirma.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
                     </article>
                 </div>
             </div>
@@ -237,8 +340,8 @@
                 <div class="footer-section">
                     <h4>Yasal</h4>
                     <ul class="footer-links">
-                        <li><a href="privacy.html">Gizlilik</a></li>
-                        <li><a href="terms.html">Şartlar</a></li>
+                        <li><a href="cookie-policy.html">Çerez Politikası</a></li>
+                        <li><a href="#privacy">Gizlilik</a></li>
                     </ul>
                 </div>
             </div>
@@ -248,28 +351,100 @@
         </div>
     </footer>
 
+    <!-- JavaScript -->
     <script>
         // Cookie Banner
-        function acceptCookies() {
-            localStorage.setItem('cookie_consent', 'accepted');
-            document.getElementById('cookieBanner').style.display = 'none';
-        }
-        function declineCookies() {
-            localStorage.setItem('cookie_consent', 'declined');
-            document.getElementById('cookieBanner').style.display = 'none';
-        }
-        if (!localStorage.getItem('cookie_consent')) {
-            setTimeout(() => {
-                document.getElementById('cookieBanner').classList.add('show');
-            }, 1000);
-        }
-        
-        // Mobile Menu
-        document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
-            document.getElementById('mainNav').classList.toggle('show');
+        (function() {
+            const cookieBanner = document.getElementById('cookieBanner');
+            const cookieAccept = document.getElementById('cookieAccept');
+            const cookieDecline = document.getElementById('cookieDecline');
+            
+            if (cookieBanner && cookieAccept && cookieDecline) {
+                const cookieConsent = localStorage.getItem('cookie_consent');
+                
+                if (!cookieConsent) {
+                    setTimeout(() => {
+                        cookieBanner.classList.add('show');
+                    }, 1000);
+                }
+                
+                cookieAccept.addEventListener('click', () => {
+                    localStorage.setItem('cookie_consent', 'accepted');
+                    cookieBanner.classList.remove('show');
+                    setTimeout(() => {
+                        cookieBanner.style.display = 'none';
+                    }, 300);
+                });
+                
+                cookieDecline.addEventListener('click', () => {
+                    localStorage.setItem('cookie_consent', 'declined');
+                    cookieBanner.classList.remove('show');
+                    setTimeout(() => {
+                        cookieBanner.style.display = 'none';
+                    }, 300);
+                });
+            }
+        })();
+
+        // Mobile Menu Toggle
+        (function() {
+            const menuToggle = document.getElementById('mobileMenuToggle');
+            const mainNav = document.getElementById('mainNav');
+            
+            if (menuToggle && mainNav) {
+                menuToggle.addEventListener('click', () => {
+                    mainNav.classList.toggle('show');
+                    const icon = menuToggle.querySelector('i');
+                    if (icon) {
+                        icon.classList.toggle('fa-bars');
+                        icon.classList.toggle('fa-times');
+                    }
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!menuToggle.contains(e.target) && !mainNav.contains(e.target)) {
+                        mainNav.classList.remove('show');
+                        const icon = menuToggle.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                });
+            }
+        })();
+
+        // Smooth Scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href === '#' || href === '') return;
+                
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    // Close mobile menu if open
+                    const mainNav = document.getElementById('mainNav');
+                    if (mainNav && mainNav.classList.contains('show')) {
+                        mainNav.classList.remove('show');
+                        const icon = document.querySelector('#mobileMenuToggle i');
+                        if (icon) {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                }
+            });
         });
     </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    
+    <!-- AdSense Script -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
 </body>
 </html>
