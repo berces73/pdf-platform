@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url><loc>https://pdf-platform.pages.dev/</loc><priority>1.0</priority></url>
+    <url><loc>https://pdf-platform.pages.dev/about.html</loc><priority>0.8</priority></url>
+    <url><loc>https://pdf-platform.pages.dev/contact.html</loc><priority>0.7</priority></url>
+    <url><loc>https://pdf-platform.pages.dev/faq.html</loc><priority>0.8</priority></url>
+    <url><loc>https://pdf-platform.pages.dev/articles/</loc><priority>0.9</priority></url>
+    <url><loc>https://pdf-platform.pages.dev/articles/pdf-birlestirme.html</loc><priority>0.8</priority></url>
+    <url><loc>https://pdf-platform.pages.dev/articles/pdf-sikistirma.html</loc><priority>0.8</priority></url>
+    <url><loc>https://pdf-platform.pages.dev/articles/jpg-pdf-donusturme.html</loc><priority>0.8</priority></url>
+</urlset>

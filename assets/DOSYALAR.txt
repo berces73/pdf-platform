@@ -1,0 +1,42 @@
+ASSETS KLASÖRÜ - GEREKLİ DOSYALAR
+
+✅ HAZIR OLANLAR (SVG - Direkt kullanılabilir):
+- logo.svg (512x512)
+- icon-192.svg (192x192)
+- icon-512.svg (512x512)
+- og-image.svg (1200x630)
+
+⚠️ ÖNERİLEN İYİLEŞTİRMELER:
+
+1. OG IMAGE (Sosyal Medya):
+   - og-image.svg dosyasını JPG'ye çevirin
+   - Online araç: https://cloudconvert.com/svg-to-jpg
+   - Veya Canva/Figma'da profesyonel tasarım yapın
+   - Boyut: 1200x630 px
+   - Format: JPG (< 300 KB)
+
+2. FAVICON (Tarayıcı İkonu):
+   - favicon.ico oluşturun
+   - Online araç: https://favicon.io/
+   - 32x32 ve 16x16 boyutları içermeli
+
+3. PWA İKONLARI (PNG):
+   - icon-192.png (192x192)
+   - icon-512.png (512x512)
+   - SVG'leri PNG'ye çevirin veya yeniden tasarlayın
+   - Şeffaf arka plan ÖNERİLMEZ (düz renkli arka plan kullanın)
+
+4. LOGO (Opsiyonel):
+   - Profesyonel logo tasarımı
+   - SVG veya yüksek çözünürlüklü PNG
+   - Transparan arka planlı versiyon
+
+NASIL KULLANILIR?
+
+Mevcut SVG dosyalar çalışır durumda!
+İyileştirmek için:
+1. Canva'da tasarım yap (ücretsiz)
+2. Görselleri bu klasöre kaydet
+3. HTML dosyalarındaki yolları güncelle (gerekirse)
+
+NOT: Şu an HTML'de inline SVG kullanılıyor, harici dosya gerektirmiyor!
