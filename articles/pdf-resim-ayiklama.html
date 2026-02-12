@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF'ten Görsel Çıkarma: Kalite Kaybetmeden Resim Ayıklama</title>
+    <meta name="description" content="PDF içindeki fotoğrafları ve grafikleri orijinal çözünürlüğünde dışa aktarma. Vektör vs Raster grafik ayrımı ve renk profilleri.">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+          "@type": "Question",
+          "name": "Resim kalitesi neden bozuluyor?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Ekran görüntüsü alırsanız kalite düşer. 'Görsel Çıkarma' aracı kullanırsanız orijinal kalitede (örneğin 300 DPI) alırsınız." }
+        },
+        {
+          "@type": "Question",
+          "name": "Hangi formatta indiriliyor?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Fotoğraflar genellikle JPEG, logolar ve grafikler ise PNG veya SVG olarak indirilir." }
+        }]
+    }
+    </script>
+
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 0; color: #333; }
+        .container { max-width: 1100px; margin: 0 auto; display: flex; gap: 40px; padding: 20px; }
+        .main-content { flex: 3; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .sidebar { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .sidebar-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .sidebar-link { display: block; padding: 10px 0; text-decoration: none; color: #555; border-bottom: 1px solid #f0f0f0; transition: 0.3s; }
+        .sidebar-link:hover { color: #007bff; padding-left: 5px; }
+        h1 { color: #2c3e50; font-size: 2rem; margin-top: 0; }
+        .breadcrumbs { font-size: 0.9em; color: #666; margin-bottom: 20px; }
+        .cta-btn { display: inline-block; background: #e0a800; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: bold; margin-top: 10px; }
+        .cta-btn:hover { background: #c69500; }
+        .sidebar-box h4 { margin-top: 0; color: #007bff; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .author-box { display: flex; align-items: center; gap: 15px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+    <div style="background:#fff; padding:15px; border-bottom:1px solid #ddd; text-align:center; font-weight:bold;">
+        <a href="/" style="text-decoration:none; color:#333; margin:0 10px;">Ana Sayfa</a>
+        <a href="/blog" style="text-decoration:none; color:#007bff; margin:0 10px;">Blog</a>
+    </div>
+
+    <div class="container">
+        <main class="main-content">
+            <div class="breadcrumbs">Anasayfa > Blog > Görsel Çıkarma</div>
+            
+            <h1>PDF'ten Görsel Çıkarma: Kalite Kaybetmeden Resim Ayıklama</h1>
+
+            <p>PDF belgeleri içindeki görselleri ayıklamak, basit bir ekran görüntüsü almaktan çok daha karmaşıktır. PDF içindeki resimler genellikle <strong>XObject</strong> adı verilen objelerde saklanır. Bu objeleri dışa aktarmak, resmin ham verisine erişmek anlamına gelir.</p>
+
+            
+
+            <h3>Raster vs Vektör Ayrımı</h3>
+            <p>Bir fotoğrafa odaklanıyorsanız raster (piksel tabanlı) veriyle uğraşıyorsunuzdur. Ancak bir logoyu çıkaracaksanız, o aslında vektörel bir çizim olabilir. Gelişmiş araçlar vektörleri SVG formatında, rasterları ise JPEG veya PNG olarak çıkarır. Vektörler, matematiksel formüllerle ($f(x,y)$) tanımlandığı için çözünürlük kaybı yaşamazlar.</p>
+
+            <div style="background:#fffff0; border:1px solid #f6e05e; padding:20px; border-radius:5px; margin:20px 0;">
+                <h3 style="margin-top:0; color:#b7791f;">Resimleri İndirmek mi İstiyorsunuz?</h3>
+                <p>Tek tıklamayla PDF içindeki tüm fotoğrafları ve grafikleri ayıklayın.</p>
+                <a href="/pdf-resim-cikar" class="cta-btn">🖼️ Görselleri Ayıkla</a>
+            </div>
+
+            <h3>Renk Profilleri ve CMYK</h3>
+            <p>Baskı amaçlı PDF'ler genellikle <strong>CMYK</strong> renk uzayını kullanır. Bu görselleri web için çıkarırken <strong>sRGB</strong> formatına dönüştürmek gerekir. Aksi takdirde renkler soluk veya yanlış görünebilir.</p>
+
+             <div class="author-box">
+                <div style="width:50px; height:50px; background:#ddd; border-radius:50%;"></div>
+                <div>
+                    <strong>Yazar: PDF Teknik Ekibi</strong>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <div class="sidebar-box">
+                <h4>Hızlı Araçlar</h4>
+                <a href="/pdf-birlestir" class="sidebar-link">📂 PDF Birleştir</a>
+                <a href="/pdf-sikistir" class="sidebar-link">📉 PDF Sıkıştır</a>
+                <a href="/ocr-pdf" class="sidebar-link">🔍 OCR</a>
+            </div>
+        </aside>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bozuk PDF Onarma ve Form Yönetimi (2026)</title>
+    <meta name="description" content="'Dosya açılamıyor' hatası çözümü ve interaktif form yönetimi. Hasarlı XRef tablolarını onarma ve veri kurtarma teknikleri.">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+          "@type": "Question",
+          "name": "PDF dosyası neden bozulur?",
+          "acceptedAnswer": { "@type": "Answer", "text": "İndirme sırasında kesinti olması, sabit disk hatası veya virüsler dosyanın yapısını (XRef tablosunu) bozabilir." }
+        },
+        {
+          "@type": "Question",
+          "name": "Her bozuk dosya kurtarılabilir mi?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Dosyanın büyük kısmı duruyorsa metin ve resimler kurtarılabilir. Ancak dosya tamamen silinmişse (%0 byte) kurtarılamaz." }
+        }]
+    }
+    </script>
+
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 0; color: #333; }
+        .container { max-width: 1100px; margin: 0 auto; display: flex; gap: 40px; padding: 20px; }
+        .main-content { flex: 3; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .sidebar { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .sidebar-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .sidebar-link { display: block; padding: 10px 0; text-decoration: none; color: #555; border-bottom: 1px solid #f0f0f0; transition: 0.3s; }
+        .sidebar-link:hover { color: #007bff; padding-left: 5px; }
+        h1 { color: #2c3e50; font-size: 2rem; margin-top: 0; }
+        .breadcrumbs { font-size: 0.9em; color: #666; margin-bottom: 20px; }
+        .cta-btn { display: inline-block; background: #e3342f; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: bold; margin-top: 10px; }
+        .cta-btn:hover { background: #cc1f1a; }
+        .author-box { display: flex; align-items: center; gap: 15px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+    <div style="background:#fff; padding:15px; border-bottom:1px solid #ddd; text-align:center; font-weight:bold;">
+        <a href="/" style="text-decoration:none; color:#333; margin:0 10px;">Ana Sayfa</a>
+        <a href="/blog" style="text-decoration:none; color:#007bff; margin:0 10px;">Blog</a>
+    </div>
+
+    <div class="container">
+        
+        <main class="main-content">
+            <div class="breadcrumbs">Anasayfa > Blog > PDF Onarma</div>
+            
+            <h1>Bozuk PDF Onarma ve Form Yönetimi</h1>
+
+            <p>İndirme sırasında kesilen veya hatalı kaydedilen PDF dosyaları bozulabilir. Genellikle dosyanın sonundaki XRef (İndeks) tablosu eksik kalır. Onarma araçları, dosyayı tarayarak bu indeksi yeniden oluşturur.</p>
+
+            
+
+            <h3>PDF Onarma: Veri Kurtarma Algoritmaları</h3>
+            <p>Bir PDF dosyası "açılamıyor" hatası veriyorsa, genellikle dosyanın sonundaki <code>%%EOF</code> (End Of File) işareti veya XRef tablosu hasar görmüştür. Onarma motorları, dosyayı baştan sona tarayarak sağlam kalan objeleri tespit eder ve yeni bir indeks oluşturur. Bu, hasarlı bir kitabı sayfa sayfa yeniden ciltlemek gibidir.</p>
+
+            <div style="background:#fff5f5; border:1px solid #fc8181; padding:20px; border-radius:5px; margin:20px 0;">
+                <h3 style="margin-top:0; color:#c53030;">Dosyanız Açılmıyor mu?</h3>
+                <p>Hasarlı dosyaları analiz edin ve verilerinizi kurtarın.</p>
+                <a href="/pdf-onar" class="cta-btn">🚑 PDF Onar</a>
+            </div>
+
+            <h3>Doldurulabilir Formlar (AcroForms)</h3>
+            <p>PDF formları, veri toplamak için standartlaştırılmış alanlar (AcroForms) kullanır. Bu formların verilerini dışa aktarmak (XML/JSON) veya form alanlarını kilitlemek (Flatten), dijital iş akışlarının önemli bir parçasıdır.</p>
+
+             <div class="author-box">
+                <div style="width:50px; height:50px; background:#ddd; border-radius:50%;"></div>
+                <div>
+                    <strong>Yazar: PDF Teknik Ekibi</strong>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <div class="sidebar-box">
+                <h4>Hızlı Araçlar</h4>
+                <a href="/pdf-sifrele" class="sidebar-link">🔒 PDF Şifrele</a>
+                <a href="/pdf-birlestir" class="sidebar-link">📂 PDF Birleştir</a>
+            </div>
+        </aside>
+    </div>
+
+</body>
+</html>
