@@ -57,3 +57,30 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// --- LINK DUZELTICI (404 HATALARINI ONLEME) ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Tum linkleri bul
+    const tumLinkler = document.querySelectorAll('a');
+
+    tumLinkler.forEach(link => {
+        const adres = link.getAttribute('href');
+
+        // Link null veya boşsa atla
+        if (!adres) return;
+
+        // 1. "Blog" sayfasina gidenleri Ana Sayfadaki Blog bolumune yonlendir
+        if (adres === '/blog' || adres === '/articles') {
+            link.href = '/#articles';
+        }
+
+        // 2. "PDF Editor", "OCR" vb. arac linklerini Ana Sayfadaki Araclar bolumune yonlendir
+        // Cunku bu araclar ayri sayfa degil, ana sayfada birer kutucuk.
+        if (adres.includes('/pdf-') || adres.includes('/ocr-') || adres.includes('tool')) {
+            // Eger link zaten bir makale dosyasi degilse (.html yoksa) araclara yonlendir
+            if (!adres.includes('.html')) {
+                link.href = '/#tools';
+            }
+        }
+    });
+});
