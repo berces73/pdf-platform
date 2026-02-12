@@ -3,80 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Sıkıştırma Rehberi - PDF Platform</title>
-    <meta name="description" content="Kaliteyi koruyarak PDF boyutunu küçültme">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../style.css">
+    
+    <!-- SEO Meta Tags -->
+    <title>PDF Sıkıştırma 2026: Kalite Kaybetmeden Boyut Küçültme</title>
+    <meta name="description" content="PDF dosyalarınızı kalite kaybetmeden %70 sıkıştırın. Görsel optimizasyonu, font yönetimi ve tarayıcı tabanlı güvenli sıkıştırma rehberi.">
+    <link rel="canonical" href="https://pdf-platform.pages.dev/articles/pdf-sikistirma.html">
+    
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "PDF sıkıştırma kaliteyi bozar mı?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Doğru ayarlarla PDF sıkıştırma kaliteyi önemli ölçüde bozmaz. Ekran görüntüleme için 150 DPI yeterlidir ve bu ayarda %70'e kadar boyut azaltması sağlanabilir."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Online PDF sıkıştırma araçları güvenli mi?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tarayıcı tabanlı araçlar en güvenli seçenektir. Bu araçlar dosyalarınızı hiçbir sunucuya yüklemez, tüm işlem bilgisayarınızda gerçekleşir."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Article Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "PDF Boyutunu Küçültme: Kalite Kaybetmeden Sıkıştırma Rehberi 2026",
+      "description": "PDF dosyalarınızı kalite kaybetmeden %70 sıkıştırın.",
+      "author": {
+        "@type": "Organization",
+        "name": "PDF Platform"
+      },
+      "datePublished": "2026-02-11",
+      "keywords": ["pdf sıkıştırma", "pdf boyut küçültme", "pdf optimize"]
+    }
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.8; color: #1f2937; }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+        
+        .header { background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1rem 0; margin-bottom: 2rem; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: #6366f1; text-decoration: none; }
+        
+        article { padding: 2rem 0; }
+        h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2; }
+        h2 { font-size: 2rem; font-weight: 700; margin: 2rem 0 1rem; color: #1f2937; }
+        h3 { font-size: 1.5rem; font-weight: 600; margin: 1.5rem 0 0.5rem; color: #374151; }
+        
+        p { margin-bottom: 1rem; color: #4b5563; }
+        .lead { font-size: 1.25rem; color: #6b7280; margin-bottom: 2rem; }
+        
+        ul { margin: 1rem 0 1rem 2rem; color: #4b5563; }
+        ul li { margin-bottom: 0.5rem; }
+        
+        .info-box, .security-box, .cta-box { 
+            background: #f0f9ff; 
+            border-left: 4px solid #6366f1; 
+            padding: 1.5rem; 
+            margin: 2rem 0; 
+            border-radius: 0.5rem; 
+        }
+        .cta-box { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; text-align: center; }
+        .cta-box h3 { color: white; }
+        .cta-box a { display: inline-block; margin-top: 1rem; padding: 0.75rem 2rem; background: white; color: #6366f1; text-decoration: none; border-radius: 0.5rem; font-weight: 600; }
+        
+        .faq-section { margin: 3rem 0; padding: 2rem; background: #f9fafb; border-radius: 0.5rem; }
+        .faq-item { margin-bottom: 1.5rem; }
+        .faq-item h3 { font-size: 1.125rem; color: #1f2937; margin-bottom: 0.5rem; }
+        .faq-item p { color: #6b7280; }
+        
+        .footer { background: #1f2937; color: white; padding: 2rem 0; text-align: center; margin-top: 4rem; }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+        }
+    </style>
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <div class="header-content">
-                <a href="../" class="logo"><i class="fas fa-file-pdf"></i><span>PDF Platform</span></a>
-                <nav class="nav"><a href="../" class="nav-link">Ana Sayfa</a></nav>
-            </div>
+            <a href="../" class="logo">📄 PDF Platform</a>
         </div>
     </header>
-    <main class="article-page">
-        <div class="container">
-            <article class="content-article">
-                <header class="article-header">
-                    <div class="article-meta">
-                        <span><i class="fas fa-calendar"></i> 10 Şubat 2026</span>
-                        <span><i class="fas fa-clock"></i> 6 dakika okuma</span>
-                    </div>
-                    <h1>"Dosya Boyutu Çok Büyük" Hatasından Kurtulun: Kaliteyi Bozmadan PDF Küçültme</h1>
-                </header>
 
-                <div class="ad-container ad-article">
-                    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="2222222222"></ins>
-                </div>
+    <main class="container">
+        <article>
+            <h1>PDF Boyutunu Küçültme: Kalite Kaybetmeden Sıkıştırma Rehberi 2026</h1>
+            
+            <p class="lead">PDF dosyalarının boyutu, e-posta ekleri ve web yüklemeleri için kritik öneme sahiptir. PDF sıkıştırma, dosya boyutunu azaltırken içeriğin okunabilirliğini ve kalitesini korumayı amaçlar.</p>
 
-                <p class="lead">Özenle hazırladığınız bir ödevi yüklemeye çalışıyorsunuz. O sinir bozucu uyarı: "Dosya boyutu sınırın üzerinde."</p>
+            <h2>PDF Dosyaları Neden Şişer?</h2>
+            
+            <p>PDF dosyalarının büyük olmasının birçok nedeni vardır. En yaygın sebep, yüksek çözünürlüklü görseller ve fotoğraflardır. Bir belgeyi 300-600 DPI'da taradığınızda, ortaya çıkan dosya oldukça büyük olabilir.</p>
 
-                <h2>PDF Dosyaları Neden Bu Kadar Büyük Olur?</h2>
-                <ul>
-                    <li><strong>Yüksek Çözünürlüklü Görseller:</strong> 300 DPI baskı kalitesi ekran için fazla</li>
-                    <li><strong>Gömülü Fontlar:</strong> Yazı tipi dosyaları yer kaplar</li>
-                    <li><strong>Meta Veriler:</strong> Görünmez ağırlık</li>
-                </ul>
+            <p>İkinci önemli neden, <strong>gömülü fontlardır</strong>. PDF formatı, belgenin her cihazda aynı görünmesini sağlamak için fontları dosyaya gömer.</p>
 
-                <h2>Akıllı Sıkıştırma Nasıl Çalışır?</h2>
-                <p>Kaba "kalite düşürme" yerine akıllı algoritmalar kullanılır:</p>
-                <ul>
-                    <li>İnsan gözünün fark edemeyeceği renk verilerini optimize eder</li>
-                    <li>Tekrarlanan veri bloklarını temizler</li>
-                    <li>Görselleri metin netliğini bozmadan yeniden örnekler</li>
-                </ul>
+            <div class="info-box">
+                <p><strong>🔒 Güvenlik Notu:</strong> Dosyalarınızı online araçlara yüklerken dikkatli olun. Tarayıcı tabanlı araçlar, dosyalarınızı hiçbir sunucuya göndermeden işlem yapar.</p>
+            </div>
 
-                <p><strong>Sonuç?</strong> 50 MB'lık dosya 5 MB'a düşebilir.</p>
+            <h2>Sıkıştırma Seviyeleri ve Kalite Dengesi</h2>
 
-                <h2>Hangi Durumlarda Kullanmalısınız?</h2>
-                <ul>
-                    <li><strong>E-Posta:</strong> Gmail/Outlook 25 MB sınırı</li>
-                    <li><strong>Web Yükleme:</strong> CV siteleri 2-5 MB sınırı</li>
-                    <li><strong>Depolama:</strong> Telefon/Drive'da yer açma</li>
-                </ul>
+            <p>PDF sıkıştırma yaparken en kritik karar, sıkıştırma seviyesi seçimidir. Düşük sıkıştırma yüksek kalite, yüksek sıkıştırma küçük dosya anlamına gelir.</p>
 
-                <div class="cta-box">
-                    <h3>Dosyanızı Hemen Sıkıştırın</h3>
-                    <a href="../#tools" class="btn btn-primary"><i class="fas fa-compress"></i> PDF Sıkıştır</a>
-                </div>
+            <h3>Ekran Görüntüleme İçin Optimizasyon</h3>
+            <p>Ekran görüntüleme için PDF'ler genellikle <strong>150 DPI</strong> çözünürlük yeterlidir. Baskı için minimum <strong>300 DPI</strong> gerekir.</p>
 
-                <div class="article-footer">
-                    <div class="tags">
-                        <span class="tag">PDF Sıkıştır</span>
-                        <span class="tag">Dosya Boyutu</span>
-                        <span class="tag">Optimize</span>
-                    </div>
-                </div>
-            </article>
-        </div>
+            <h2>Görsel Optimizasyonu Teknikleri</h2>
+
+            <p>PDF içindeki görselleri optimize etmek, boyut azaltmanın en etkili yoludur:</p>
+
+            <ul>
+                <li>Gereksiz yüksek çözünürlüklü görselleri tespit edin</li>
+                <li>Renk derinliğini azaltın (24-bit → 8-bit)</li>
+                <li>Uygun format seçin (PNG grafikler, JPEG fotoğraflar)</li>
+                <li>Font alt kümeleme (subsetting) yapın</li>
+            </ul>
+
+            <div class="cta-box">
+                <h3>PDF Dosyanızı Şimdi Sıkıştırın</h3>
+                <p>Tarayıcı tabanlı güvenli sıkıştırma. Dosyalarınız hiçbir sunucuya yüklenmez.</p>
+                <a href="../">Ücretsiz Sıkıştır</a>
+            </div>
+        </article>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <h2>Sık Sorulan Sorular</h2>
+            
+            <div class="faq-item">
+                <h3>PDF sıkıştırma kaliteyi bozar mı?</h3>
+                <p>Doğru ayarlarla PDF sıkıştırma kaliteyi önemli ölçüde bozmaz. Ekran görüntüleme için 150 DPI yeterlidir ve %70'e kadar boyut azaltması sağlanabilir.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Online PDF sıkıştırma araçları güvenli mi?</h3>
+                <p>Tarayıcı tabanlı araçlar en güvenli seçenektir. Bu araçlar dosyalarınızı hiçbir sunucuya yüklemez, tüm işlem bilgisayarınızda gerçekleşir.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Hangi dosya formatları daha iyi sıkıştırılır?</h3>
+                <p>Metin ağırlıklı PDF'ler en iyi sıkıştırma oranını verir. Yüksek çözünürlüklü görseller içeren PDF'ler %80'e kadar küçültülebilir.</p>
+            </div>
+        </section>
     </main>
-    <footer class="footer"><div class="container"><p>&copy; 2026 PDF Platform</p></div></footer>
-    <script src="../script.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 PDF Platform - Güvenli PDF İşlemleri</p>
+            <p style="margin-top: 0.5rem;"><a href="../" style="color: #9ca3af;">Ana Sayfaya Dön</a></p>
+        </div>
+    </footer>
 </body>
 </html>
