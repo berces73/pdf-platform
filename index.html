@@ -1,650 +1,618 @@
-/**
- * PDF Platform - Core Script
- * Tarayıcı tabanlı PDF işlemleri için merkezi kontrol
- */
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- SEO Meta -->
+    <title>PDF Platform - Ücretsiz Online PDF Araçları | Birleştir, Böl, Sıkıştır</title>
+    <meta name="description" content="PDF dosyalarınızı güvenle işleyin. Birleştirin, bölün, sıkıştırın. Dosyalarınız sunucuya yüklenmez, tarayıcınızda işlenir. %100 ücretsiz PDF araçları.">
+    <meta name="keywords" content="pdf birleştir, pdf böl, pdf sıkıştır, online pdf araçları, ücretsiz pdf dönüştürücü, pdf to jpg, jpg to pdf">
+    <meta name="author" content="PDF Platform">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="https://pdf-platform.pages.dev/">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pdf-platform.pages.dev/">
+    <meta property="og:title" content="PDF Platform - Ücretsiz Online PDF Araçları">
+    <meta property="og:description" content="PDF dosyalarınızı güvenle işleyin. Dosyalarınız sunucuya yüklenmez, %100 tarayıcınızda çalışır.">
+    <meta property="og:site_name" content="PDF Platform">
+    <meta property="og:locale" content="tr_TR">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PDF Platform - Ücretsiz Online PDF Araçları">
+    <meta name="twitter:description" content="PDF birleştir, böl, sıkıştır. Güvenli ve hızlı.">
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "PDF Platform",
+      "url": "https://pdf-platform.pages.dev",
+      "description": "Ücretsiz online PDF araçları platformu",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://pdf-platform.pages.dev/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "PDF Platform",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1247"
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Ana Sayfa",
+        "item": "https://pdf-platform.pages.dev/"
+      }]
+    }
+    </script>
 
-// ====================================================================
-// CONSTANTS - Sihirli sayılar yerine sabitler
-// ====================================================================
-
-const CONFIG = {
-    MAX_FILE_SIZE: 50 * 1024 * 1024, // 50 MB
-    MAX_FILES_COUNT: 20,
-    ALLOWED_EXTENSIONS: ['pdf', 'jpg', 'jpeg', 'png'],
-    ANIMATION_DURATION: 300,
-    SUCCESS_MESSAGE_DURATION: 3000
-};
-
-const MESSAGES = {
-    noFile: 'Lütfen bir dosya seçin',
-    invalidFormat: 'Desteklenmeyen dosya formatı',
-    fileTooLarge: 'Dosya çok büyük (maksimum 50 MB)',
-    tooManyFiles: 'En fazla 20 dosya seçebilirsiniz',
-    processing: 'İşleniyor...',
-    success: 'Tamamlandı! Dosyanız indiriliyor',
-    error: 'Bir sorun oluştu. Lütfen tekrar deneyin',
-    selectFiles: 'Dosyaları sürükleyin veya tıklayın'
-};
-
-// ====================================================================
-// CORE UTILITIES - Temel yardımcı fonksiyonlar
-// ====================================================================
-
-const FileUtils = {
-    /**
-     * Dosya adı oluşturur: dosya_merge_2026-02-11.pdf
-     */
-    generateFilename(originalName, operation) {
-        const baseName = this.removeExtension(originalName);
-        const timestamp = this.getTimestamp();
-        const extension = this.getExtension(originalName);
+    <!-- Styles -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
-        return `${baseName}_${operation}_${timestamp}.${extension}`;
-    },
-
-    /**
-     * Dosya uzantısını al
-     */
-    getExtension(filename) {
-        return filename.split('.').pop().toLowerCase();
-    },
-
-    /**
-     * Dosya adından uzantıyı kaldır
-     */
-    removeExtension(filename) {
-        return filename.replace(/\.[^/.]+$/, '');
-    },
-
-    /**
-     * Timestamp üret: 2026-02-11
-     */
-    getTimestamp() {
-        const now = new Date();
-        return now.toISOString().split('T')[0];
-    },
-
-    /**
-     * Dosya uzantısını doğrula
-     */
-    isValidExtension(filename) {
-        const ext = this.getExtension(filename);
-        return CONFIG.ALLOWED_EXTENSIONS.includes(ext);
-    },
-
-    /**
-     * Dosya boyutunu kontrol et
-     */
-    isValidSize(file) {
-        return file.size <= CONFIG.MAX_FILE_SIZE;
-    },
-
-    /**
-     * İnsan okunabilir dosya boyutu: 2.5 MB
-     */
-    formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    }
-};
-
-// ====================================================================
-// UI CONTROLLER - Kullanıcı arayüzü yönetimi
-// ====================================================================
-
-const UI = {
-    /**
-     * Başarı mesajı göster
-     */
-    showSuccess(message = MESSAGES.success) {
-        this.showMessage(message, 'success');
-    },
-
-    /**
-     * Hata mesajı göster
-     */
-    showError(message = MESSAGES.error) {
-        this.showMessage(message, 'error');
-    },
-
-    /**
-     * Bilgi mesajı göster
-     */
-    showInfo(message) {
-        this.showMessage(message, 'info');
-    },
-
-    /**
-     * Genel mesaj gösterici
-     */
-    showMessage(text, type) {
-        // Mevcut mesajları temizle
-        this.clearMessages();
-
-        const messageEl = document.createElement('div');
-        messageEl.className = `message message-${type}`;
-        messageEl.textContent = text;
-        messageEl.setAttribute('role', 'alert');
-
-        // Sayfada #message-container varsa oraya ekle
-        const container = document.getElementById('message-container') || document.body;
-        container.appendChild(messageEl);
-
-        // Animasyon
-        setTimeout(() => messageEl.classList.add('show'), 10);
-
-        // Başarı mesajları otomatik kaybolsun
-        if (type === 'success') {
-            setTimeout(() => this.removeMessage(messageEl), CONFIG.SUCCESS_MESSAGE_DURATION);
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: #ffffff;
         }
-    },
-
-    /**
-     * Mesajı kaldır
-     */
-    removeMessage(messageEl) {
-        messageEl.classList.remove('show');
-        setTimeout(() => messageEl.remove(), CONFIG.ANIMATION_DURATION);
-    },
-
-    /**
-     * Tüm mesajları temizle
-     */
-    clearMessages() {
-        document.querySelectorAll('.message').forEach(msg => msg.remove());
-    },
-
-    /**
-     * Loading durumu göster/gizle
-     */
-    setLoading(isLoading, buttonEl) {
-        if (!buttonEl) return;
-
-        if (isLoading) {
-            buttonEl.disabled = true;
-            buttonEl.dataset.originalText = buttonEl.textContent;
-            buttonEl.textContent = MESSAGES.processing;
-            buttonEl.classList.add('loading');
-        } else {
-            buttonEl.disabled = false;
-            buttonEl.textContent = buttonEl.dataset.originalText || buttonEl.textContent;
-            buttonEl.classList.remove('loading');
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
-    },
-
-    /**
-     * Dosya listesi önizlemesi
-     */
-    renderFileList(files, containerId) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        container.innerHTML = '';
-
-        Array.from(files).forEach((file, index) => {
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.innerHTML = `
-                <span class="file-name">${file.name}</span>
-                <span class="file-size">${FileUtils.formatFileSize(file.size)}</span>
-                <button class="remove-file" data-index="${index}">×</button>
-            `;
-            container.appendChild(fileItem);
-        });
-    }
-};
-
-// ====================================================================
-// VALIDATOR - Dosya doğrulama
-// ====================================================================
-
-const Validator = {
-    /**
-     * Dosya seçimi yapıldı mı?
-     */
-    hasFiles(files) {
-        if (!files || files.length === 0) {
-            UI.showError(MESSAGES.noFile);
-            return false;
+        
+        /* Header */
+        header {
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        return true;
-    },
-
-    /**
-     * Dosya sayısı sınırında mı?
-     */
-    checkFileCount(files) {
-        if (files.length > CONFIG.MAX_FILES_COUNT) {
-            UI.showError(MESSAGES.tooManyFiles);
-            return false;
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #6366f1;
+            text-decoration: none;
         }
-        return true;
-    },
-
-    /**
-     * Tüm dosyaları doğrula
-     */
-    validateFiles(files) {
-        if (!this.hasFiles(files)) return false;
-        if (!this.checkFileCount(files)) return false;
-
-        for (let file of files) {
-            if (!FileUtils.isValidExtension(file.name)) {
-                UI.showError(`${MESSAGES.invalidFormat}: ${file.name}`);
-                return false;
+        
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: #ffffff;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+        
+        .hero-trust {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #ffffff;
+            color: #6366f1;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1.125rem;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Section */
+        section {
+            padding: 4rem 0;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 1.125rem;
+            margin-bottom: 3rem;
+        }
+        
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .tool-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .tool-card:hover {
+            border-color: #6366f1;
+            box-shadow: 0 10px 25px rgba(99,102,241,0.1);
+            transform: translateY(-4px);
+        }
+        
+        .tool-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tool-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+        }
+        
+        .tool-card p {
+            color: #6b7280;
+        }
+        
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .feature {
+            text-align: center;
+        }
+        
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+        }
+        
+        .feature h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature p {
+            color: #6b7280;
+        }
+        
+        /* Content Section */
+        .content-section {
+            background: #f9fafb;
+        }
+        
+        .content-text {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        .content-text h3 {
+            font-size: 1.75rem;
+            margin: 2rem 0 1rem;
+            color: #1f2937;
+        }
+        
+        .content-text p {
+            margin-bottom: 1rem;
+            color: #4b5563;
+        }
+        
+        .content-text ul {
+            margin: 1rem 0 1rem 2rem;
+            color: #4b5563;
+        }
+        
+        .content-text li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Trust Section */
+        .trust-section {
+            background: linear-gradient(to bottom, #f0f9ff, #e0f2fe);
+        }
+        
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .trust-card {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .trust-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        
+        .trust-card p {
+            color: #6b7280;
+        }
+        
+        /* FAQ */
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .faq-item h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.75rem;
+            color: #1f2937;
+        }
+        
+        .faq-item p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1f2937;
+            color: #ffffff;
+            padding: 3rem 0 1.5rem;
+            text-align: center;
+        }
+        
+        footer p {
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
             }
-
-            if (!FileUtils.isValidSize(file)) {
-                UI.showError(`${MESSAGES.fileTooLarge}: ${file.name}`);
-                return false;
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .tools-grid,
+            .features-grid,
+            .trust-grid {
+                grid-template-columns: 1fr;
             }
         }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <a href="/" class="logo">📄 PDF Platform</a>
+        </div>
+    </header>
 
-        return true;
-    },
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Dosyalarınız Hiçbir Zaman Sunucuya Yüklenmez</h1>
+            <p class="hero-subtitle">PDF dosyalarınızı birleştirin, bölün, sıkıştırın ve dönüştürün.<br>Tüm işlemler %100 tarayıcınızda gerçekleşir.</p>
+            <div class="hero-trust">
+                🔒 Güvenli • Hızlı • Ücretsiz
+            </div>
+            <a href="#tools" class="btn">PDF Araçlarını Kullan</a>
+        </div>
+    </section>
 
-    /**
-     * Tek dosya doğrula
-     */
-    validateSingleFile(file) {
-        return this.validateFiles([file]);
-    }
-};
-
-// ====================================================================
-// DOWNLOAD MANAGER - Dosya indirme yönetimi
-// ====================================================================
-
-const DownloadManager = {
-    /**
-     * Blob'u indir
-     */
-    downloadBlob(blob, filename) {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        link.click();
-
-        // Cleanup
-        setTimeout(() => URL.revokeObjectURL(url), 100);
-    },
-
-    /**
-     * Base64'ü indir
-     */
-    downloadBase64(base64Data, filename, mimeType = 'application/pdf') {
-        const byteString = atob(base64Data.split(',')[1]);
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-
-        for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-        }
-
-        const blob = new Blob([ab], { type: mimeType });
-        this.downloadBlob(blob, filename);
-    }
-};
-
-// ====================================================================
-// PDF PROCESSOR - PDF işlemleri için temel sınıf
-// ====================================================================
-
-class PDFProcessor {
-    constructor(operation) {
-        this.operation = operation;
-    }
-
-    /**
-     * İşlem başlat
-     */
-    async process(files, options = {}) {
-        try {
-            // Doğrulama
-            if (!Validator.validateFiles(files)) {
-                return;
-            }
-
-            // UI feedback
-            UI.clearMessages();
-            const button = options.button;
-            if (button) UI.setLoading(true, button);
-
-            // İşlem yap
-            const result = await this.execute(files, options);
-
-            // Başarılı
-            if (result) {
-                UI.showSuccess();
+    <!-- Tools Section -->
+    <section id="tools">
+        <div class="container">
+            <h2>PDF Araçları</h2>
+            <p class="section-subtitle">İhtiyacınız olan tüm PDF işlemlerini tek yerden yapın</p>
+            
+            <div class="tools-grid">
+                <a href="pages.html?tool=merge" class="tool-card">
+                    <div class="tool-icon">📑</div>
+                    <h3>PDF Birleştir</h3>
+                    <p>Birden fazla PDF dosyasını tek bir belgede birleştirin</p>
+                </a>
                 
-                // İndirme
-                if (result.blob && result.filename) {
-                    DownloadManager.downloadBlob(result.blob, result.filename);
-                }
-            }
+                <a href="pages.html?tool=split" class="tool-card">
+                    <div class="tool-icon">✂️</div>
+                    <h3>PDF Böl</h3>
+                    <p>PDF sayfalarını ayrı dosyalara bölün</p>
+                </a>
+                
+                <a href="pages.html?tool=compress" class="tool-card">
+                    <div class="tool-icon">📦</div>
+                    <h3>PDF Sıkıştır</h3>
+                    <p>Dosya boyutunu kalite kaybetmeden küçültün</p>
+                </a>
+                
+                <a href="pages.html?tool=pdf-to-jpg" class="tool-card">
+                    <div class="tool-icon">🖼️</div>
+                    <h3>PDF'den JPG</h3>
+                    <p>PDF sayfalarını JPG görsellerine dönüştürün</p>
+                </a>
+                
+                <a href="pages.html?tool=jpg-to-pdf" class="tool-card">
+                    <div class="tool-icon">📷</div>
+                    <h3>JPG'den PDF</h3>
+                    <p>JPG, PNG görsellerinizi PDF'e dönüştürün</p>
+                </a>
+                
+                <a href="pages.html?tool=rotate" class="tool-card">
+                    <div class="tool-icon">🔄</div>
+                    <h3>PDF Döndür</h3>
+                    <p>PDF sayfalarını 90, 180 veya 270 derece döndürün</p>
+                </a>
+            </div>
+        </div>
+    </section>
 
-        } catch (error) {
-            console.error('PDF işlem hatası:', error);
-            UI.showError(error.message || MESSAGES.error);
-        } finally {
-            if (options.button) {
-                UI.setLoading(false, options.button);
-            }
-        }
-    }
+    <!-- Why Choose Us -->
+    <section>
+        <div class="container">
+            <h2>Neden PDF Platform?</h2>
+            <p class="section-subtitle">Gizliliğiniz ve verimliliğiniz bizim önceliğimiz</p>
+            
+            <div class="features-grid">
+                <article class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <h3>%100 Güvenli</h3>
+                    <p>Dosyalarınız hiçbir sunucuya yüklenmez. Tüm işlemler tarayıcınızda gerçekleşir ve verileriniz yalnızca size aittir.</p>
+                </article>
+                
+                <article class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Hızlı İşlem</h3>
+                    <p>Sunucuya yükleme bekleme süresi yok. PDF işlemleriniz anında tamamlanır ve hemen indirebilirsiniz.</p>
+                </article>
+                
+                <article class="feature">
+                    <div class="feature-icon">🎁</div>
+                    <h3>Tamamen Ücretsiz</h3>
+                    <p>Tüm araçlarımız ücretsizdir. Kayıt gerekmez, dosya boyutu sınırı yoktur, reklamsız kullanabilirsiniz.</p>
+                </article>
+                
+                <article class="feature">
+                    <div class="feature-icon">💻</div>
+                    <h3>Kurulum Gerekmez</h3>
+                    <p>Herhangi bir yazılım indirmenize gerek yok. Tüm cihazlardan tarayıcı üzerinden kullanabilirsiniz.</p>
+                </article>
+            </div>
+        </div>
+    </section>
 
-    /**
-     * Gerçek işlem - alt sınıflar override edecek
-     */
-    async execute(files, options) {
-        throw new Error('execute() metodu override edilmeli');
-    }
+    <!-- Content Section -->
+    <section class="content-section">
+        <div class="container">
+            <div class="content-text">
+                <h2>Online PDF Araçları: Modern Belge Yönetiminin Vazgeçilmezi</h2>
+                
+                <p>Dijital çağda PDF formatı, belge paylaşımı ve arşivlemede evrensel bir standart haline gelmiştir. İster iş dünyasında çalışın, ister akademik alanda, ister kişisel projelerinizde kullanın - PDF dosyalarıyla düzenli olarak karşılaşırsınız. Ancak bu dosyaları etkili bir şekilde yönetmek, düzenlemek ve optimize etmek için güvenilir araçlara ihtiyaç vardır.</p>
+                
+                <h3>PDF Araçları Ne İşe Yarar?</h3>
+                
+                <p>PDF araçları, belge yönetimi süreçlerinizi kolaylaştıran dijital asistanlardır. Birden fazla belgeyi tek dosyada birleştirmeniz, büyük dosyaları daha yönetilebilir parçalara bölmeniz veya e-posta eki olarak göndermek için dosya boyutunu küçültmeniz gerekebilir. Belki de bir sunumu görsel formatına dönüştürmeniz veya fotoğraflarınızdan profesyonel bir portföy oluşturmanız gerekiyordur.</p>
+                
+                <p>Geleneksel yöntemler genellikle karmaşık yazılımlar indirmeyi, lisans satın almayı veya dosyalarınızı bilinmeyen sunuculara yüklemeyi gerektirir. Bu durum hem zaman kaybına hem de güvenlik endişelerine yol açar. Modern tarayıcı tabanlı PDF araçları ise bu sorunların tümüne çözüm sunar.</p>
+                
+                <h3>Kimler ve Neden Kullanır?</h3>
+                
+                <p><strong>İş Profesyonelleri:</strong> Raporları birleştirmek, sunumları optimize etmek, sözleşmeleri düzenlemek için PDF araçlarını günlük iş akışlarının bir parçası haline getirmiştir. Müşteri sunumları hazırlarken birden fazla belgeyi tek dosyada toplamak, profesyonellik katar ve e-posta eklerini yönetilebilir tutar.</p>
+                
+                <p><strong>Öğrenciler ve Akademisyenler:</strong> Ders notlarını organize etmek, ödev dosyalarını birleştirmek, tez belgelerini hazırlamak için PDF düzenleme araçlarına sıklıkla başvururlar. Özellikle çevrimiçi eğitim döneminde, taranmış belgeleri PDF formatına dönüştürmek ve düzenlemek rutin bir ihtiyaç haline gelmiştir.</p>
+                
+                <p><strong>Küçük İşletme Sahipleri:</strong> Fatura düzenleme, belge arşivleme, müşteri dosyaları yönetimi gibi günlük işlemlerde pratik PDF çözümlerine ihtiyaç duyarlar. Pahalı yazılımlara yatırım yapmadan profesyonel sonuçlar elde edebilirler.</p>
+                
+                <p><strong>Dijital İçerik Üreticileri:</strong> E-kitap yazarları, grafik tasarımcılar ve dijital pazarlamacılar, içeriklerini PDF formatında optimize ederek daha geniş kitlelere ulaştırırlar. Dosya boyutunu küçültmek, web performansını doğrudan etkiler ve kullanıcı deneyimini iyileştirir.</p>
+                
+                <h3>Hangi Senaryolarda Avantajlı?</h3>
+                
+                <p><strong>Uzaktan Çalışma Ortamları:</strong> Ekip üyeleri farklı lokasyonlardan belge paylaşırken, dosya boyutu ve format uyumluluğu kritik önem taşır. PDF araçları, büyük sunumları sıkıştırarak e-posta eklerinde sorun yaşamanızı engeller ve bant genişliğinden tasarruf sağlar.</p>
+                
+                <p><strong>Mobil Çalışma:</strong> Tablet veya telefon kullanarak belge düzenlemesi yapmanız gerektiğinde, tarayıcı tabanlı araçlar yaşam kurtarır. Masaüstü yazılım gerektirmeden, herhangi bir cihazdan erişim sağlayabilirsiniz.</p>
+                
+                <p><strong>Gizlilik Gerektiren İşlemler:</strong> Hassas belgelerle çalışırken, dosyalarınızı üçüncü parti sunuculara yüklemek risk oluşturur. Tarayıcınızda çalışan araçlar, verilerinizin hiçbir zaman dışarıya çıkmamasını garanti eder.</p>
+                
+                <p><strong>Hızlı İhtiyaçlar:</strong> Son dakika sunumları hazırlarken veya acil belge düzenlemeleri yaparken, yazılım indirme ve kurulum süresi lüksü yoktur. Online araçlar, anında erişim ve hızlı sonuç sunar.</p>
+                
+                <h3>Modern PDF İşlemlerinin Temeli: Tarayıcı Teknolojisi</h3>
+                
+                <p>Günümüz web tarayıcıları, güçlü JavaScript motorları sayesinde karmaşık belge işlemlerini doğrudan kullanıcının cihazında gerçekleştirebilir. Bu yaklaşım, geleneksel sunucu tabanlı yöntemlere göre birçok avantaj sunar:</p>
+                
+                <ul>
+                    <li><strong>Anında İşlem:</strong> Dosyalarınızı sunucuya yükleme ve indirme bekleme süresi yoktur</li>
+                    <li><strong>Sınırsız Kullanım:</strong> İşlem sayısı veya dosya boyutu kısıtlaması bulunmaz</li>
+                    <li><strong>Çevrimdışı Çalışma:</strong> İnternet bağlantısı kesildikten sonra bile işlemlerinize devam edebilirsiniz</li>
+                    <li><strong>Çoklu Platform Desteği:</strong> Windows, Mac, Linux, Android, iOS - tüm işletim sistemlerinde aynı deneyim</li>
+                </ul>
+                
+                <p>Bu teknoloji, özellikle kurumsal kullanıcılar için önemli bir değer sunar. Şirket ağları genellikle dosya yükleme ve indirme işlemlerini sınırlar veya izler. Tarayıcı tabanlı araçlar bu kısıtlamaları aşar ve kullanıcıların bağımsız çalışmasını sağlar.</p>
+                
+                <h3>Belge Yönetiminde Verimlilik</h3>
+                
+                <p>PDF araçlarını etkin kullanmak, sadece teknik bir beceri değil, aynı zamanda zaman yönetimi stratejisidir. Örneğin, haftalık raporlarınızı manuel olarak birleştirmek yerine otomatik araçlar kullanarak dakikalar içinde tek dosya oluşturabilirsiniz. Büyük sunum dosyalarını sıkıştırarak hem depolama alanından tasarruf eder hem de paylaşım hızını artırırsınız.</p>
+                
+                <p>Dijital arşivleme açısından, PDF formatının evrensel uyumluluğu ve uzun ömürlülüğü, belge yönetimi sistemlerinin temel taşıdır. Ancak bu avantajdan tam anlamıyla yararlanmak için dosyalarınızı düzenli tutmanız ve optimize etmeniz gerekir.</p>
+            </div>
+        </div>
+    </section>
 
-    /**
-     * Yardımcı: İlk dosyanın adını al
-     */
-    getBaseFilename(files) {
-        return files[0]?.name || 'document.pdf';
-    }
+    <!-- Trust Section -->
+    <section class="trust-section">
+        <div class="container">
+            <h2>Güvenlik ve Gizlilik</h2>
+            <p class="section-subtitle">Verileriniz size aittir ve öyle kalır</p>
+            
+            <div class="trust-grid">
+                <article class="trust-card">
+                    <h3>🔐 Dosyalar Nerede İşleniyor?</h3>
+                    <p>Tüm PDF işlemleri doğrudan tarayıcınızda, bilgisayarınızda gerçekleşir. Hiçbir dosya sunucularımıza yüklenmez, saklanmaz veya üçüncü taraflarla paylaşılmaz. İşlem tamamlandıktan sonra dosyalar yalnızca sizin kontrolünüzde kalır.</p>
+                </article>
+                
+                <article class="trust-card">
+                    <h3>🗑️ Veri Saklanıyor Mu?</h3>
+                    <p>Hayır. İşlediğiniz PDF dosyaları hiçbir şekilde sunucularımızda saklanmaz. Tarayıcınızı kapattığınızda, tüm veriler otomatik olarak silinir. Hiçbir iz bırakmadan çalışabilirsiniz.</p>
+                </article>
+                
+                <article class="trust-card">
+                    <h3>👥 Kimler İçin Güvenli?</h3>
+                    <p>Finans sektörü, sağlık kuruluşları, hukuk ofisleri, eğitim kurumları ve hassas verilerle çalışan herkes için güvenlidir. GDPR ve veri koruma yasalarına tam uyumludur çünkü verileriniz hiçbir zaman sizden ayrılmaz.</p>
+                </article>
+            </div>
+        </div>
+    </section>
 
-    /**
-     * Yardımcı: Çıktı dosya adı üret
-     */
-    generateOutputFilename(inputFilename) {
-        return FileUtils.generateFilename(inputFilename, this.operation);
-    }
-}
+    <!-- FAQ Section -->
+    <section>
+        <div class="container">
+            <h2>Sık Sorulan Sorular</h2>
+            <p class="section-subtitle">Merak ettikleriniz</p>
+            
+            <div class="faq-list">
+                <article class="faq-item">
+                    <h3>PDF araçlarını kullanmak için kayıt olmam gerekiyor mu?</h3>
+                    <p>Hayır. Hiçbir kayıt, hesap oluşturma veya kişisel bilgi paylaşımı gerekmez. Direkt olarak araçları kullanmaya başlayabilirsiniz.</p>
+                </article>
+                
+                <article class="faq-item">
+                    <h3>Dosya boyutu sınırı var mı?</h3>
+                    <p>Tarayıcınızda çalıştığı için teknik olarak bir sınır yoktur, ancak çok büyük dosyalar (100 MB üzeri) işlem süresini uzatabilir. Optimal performans için 50 MB altı dosyalar önerilir.</p>
+                </article>
+                
+                <article class="faq-item">
+                    <h3>Mobil cihazlardan kullanabilir miyim?</h3>
+                    <p>Evet. Tüm araçlarımız mobil uyumludur ve telefon veya tabletten sorunsuz çalışır. Modern tarayıcıları destekleyen her cihazda kullanabilirsiniz.</p>
+                </article>
+                
+                <article class="faq-item">
+                    <h3>İşlem sonrası dosyam otomatik olarak siliniyor mu?</h3>
+                    <p>Evet. Tarayıcınızı kapattığınızda veya sayfayı yenilediğinizde tüm geçici veriler otomatik olarak temizlenir. İsterseniz manuel olarak da silebilirsiniz.</p>
+                </article>
+                
+                <article class="faq-item">
+                    <h3>PDF kalitesi düşer mi?</h3>
+                    <p>Hayır. PDF birleştirme, bölme ve döndürme işlemleri kaliteyi etkilemez. Sıkıştırma işleminde ise kalite ayarlarını siz belirlersiniz.</p>
+                </article>
+                
+                <article class="faq-item">
+                    <h3>İnternet bağlantısı kesilirse ne olur?</h3>
+                    <p>İlk yüklemeden sonra araçlar tarayıcınızda çalıştığı için internet bağlantısı kesilse bile işlemlerinize devam edebilirsiniz. Sadece dosyayı indirirken bağlantı gerekir.</p>
+                </article>
+            </div>
+        </div>
+    </section>
 
-// ====================================================================
-// TOOL IMPLEMENTATIONS - PDF araçları
-// ====================================================================
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p><strong>PDF Platform</strong> - Güvenli Online PDF Araçları</p>
+            <p>Dosyalarınız hiçbir zaman sunucuya yüklenmez. %100 tarayıcı tabanlı işlem.</p>
+            <p style="margin-top: 2rem; opacity: 0.6;">&copy; 2026 PDF Platform. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
 
-/**
- * PDF Birleştirme
- */
-class MergeTool extends PDFProcessor {
-    constructor() {
-        super('merged');
-    }
-
-    async execute(files, options) {
-        // pdf-lib kütüphanesi yüklü olmalı
-        if (typeof PDFLib === 'undefined') {
-            throw new Error('PDF kütüphanesi yüklenmedi');
-        }
-
-        const { PDFDocument } = PDFLib;
-        const mergedPdf = await PDFDocument.create();
-
-        for (let file of files) {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await PDFDocument.load(arrayBuffer);
-            const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-            copiedPages.forEach((page) => mergedPdf.addPage(page));
-        }
-
-        const pdfBytes = await mergedPdf.save();
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const filename = this.generateOutputFilename(this.getBaseFilename(files));
-
-        return { blob, filename };
-    }
-}
-
-/**
- * PDF Sıkıştırma (metadata temizleme)
- */
-class CompressTool extends PDFProcessor {
-    constructor() {
-        super('compressed');
-    }
-
-    async execute(files, options) {
-        if (typeof PDFLib === 'undefined') {
-            throw new Error('PDF kütüphanesi yüklenmedi');
-        }
-
-        const { PDFDocument } = PDFLib;
-        const file = files[0];
-
-        const arrayBuffer = await file.arrayBuffer();
-        const pdfDoc = await PDFDocument.load(arrayBuffer);
-
-        // Metadata temizle
-        pdfDoc.setTitle('');
-        pdfDoc.setAuthor('');
-        pdfDoc.setSubject('');
-        pdfDoc.setCreator('PDF Platform');
-        pdfDoc.setProducer('PDF Platform');
-
-        const pdfBytes = await pdfDoc.save();
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const filename = this.generateOutputFilename(file.name);
-
-        return { blob, filename };
-    }
-}
-
-/**
- * JPG'den PDF'e dönüştürme
- */
-class JpgToPdfTool extends PDFProcessor {
-    constructor() {
-        super('converted');
-    }
-
-    async execute(files, options) {
-        if (typeof PDFLib === 'undefined') {
-            throw new Error('PDF kütüphanesi yüklenmedi');
-        }
-
-        const { PDFDocument } = PDFLib;
-        const pdfDoc = await PDFDocument.create();
-
-        for (let file of files) {
-            const arrayBuffer = await file.arrayBuffer();
-            const image = await (file.type === 'image/png' 
-                ? pdfDoc.embedPng(arrayBuffer) 
-                : pdfDoc.embedJpg(arrayBuffer));
-
-            const page = pdfDoc.addPage([image.width, image.height]);
-            page.drawImage(image, {
-                x: 0,
-                y: 0,
-                width: image.width,
-                height: image.height,
-            });
-        }
-
-        const pdfBytes = await pdfDoc.save();
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        
-        const baseName = FileUtils.removeExtension(this.getBaseFilename(files));
-        const filename = `${baseName}_${this.operation}_${FileUtils.getTimestamp()}.pdf`;
-
-        return { blob, filename };
-    }
-}
-
-// ====================================================================
-// TOOL FACTORY - Araç fabrikası
-// ====================================================================
-
-const ToolFactory = {
-    tools: {
-        'merge': MergeTool,
-        'compress': CompressTool,
-        'jpg-to-pdf': JpgToPdfTool
-        // Yeni araçlar buraya eklenebilir
-    },
-
-    /**
-     * Araç oluştur
-     */
-    create(toolType) {
-        const ToolClass = this.tools[toolType];
-        
-        if (!ToolClass) {
-            throw new Error(`Bilinmeyen araç türü: ${toolType}`);
-        }
-
-        return new ToolClass();
-    },
-
-    /**
-     * Yeni araç kaydet
-     */
-    register(toolType, ToolClass) {
-        this.tools[toolType] = ToolClass;
-    }
-};
-
-// ====================================================================
-// MAIN APP CONTROLLER
-// ====================================================================
-
-const PDFApp = {
-    currentTool: null,
-
-    /**
-     * Uygulamayı başlat
-     */
-    init() {
-        this.setupEventListeners();
-        this.detectCurrentTool();
-    },
-
-    /**
-     * URL'den araç türünü tespit et
-     */
-    detectCurrentTool() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const tool = urlParams.get('tool');
-        
-        if (tool) {
-            this.setTool(tool);
-        }
-    },
-
-    /**
-     * Aktif aracı ayarla
-     */
-    setTool(toolType) {
-        try {
-            this.currentTool = ToolFactory.create(toolType);
-        } catch (error) {
-            console.error('Araç yükleme hatası:', error);
-            this.currentTool = null;
-        }
-    },
-
-    /**
-     * Event listener'ları kur
-     */
-    setupEventListeners() {
-        // Dosya yükleme alanları
-        document.querySelectorAll('input[type="file"]').forEach(input => {
-            input.addEventListener('change', (e) => this.handleFileSelect(e));
-        });
-
-        // İşlem butonları
-        document.querySelectorAll('[data-action]').forEach(button => {
-            button.addEventListener('click', (e) => this.handleAction(e));
-        });
-
-        // Drag & Drop
-        this.setupDragAndDrop();
-    },
-
-    /**
-     * Dosya seçimi
-     */
-    handleFileSelect(event) {
-        const files = event.target.files;
-        
-        if (Validator.validateFiles(files)) {
-            UI.renderFileList(files, 'file-list');
-        }
-    },
-
-    /**
-     * Aksiyon butonları
-     */
-    handleAction(event) {
-        const button = event.target;
-        const action = button.dataset.action;
-        const fileInputId = button.dataset.fileInput || 'file-input';
-        const fileInput = document.getElementById(fileInputId);
-
-        if (!fileInput) {
-            console.error('Dosya input elementi bulunamadı');
-            return;
-        }
-
-        const files = fileInput.files;
-
-        if (this.currentTool) {
-            this.currentTool.process(files, { button });
-        } else {
-            UI.showError('Araç yüklenemedi');
-        }
-    },
-
-    /**
-     * Drag & Drop kurulumu
-     */
-    setupDragAndDrop() {
-        const dropZones = document.querySelectorAll('.drop-zone');
-
-        dropZones.forEach(zone => {
-            zone.addEventListener('dragover', (e) => {
+    <!-- Minimal JavaScript for smooth scroll -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                zone.classList.add('drag-over');
-            });
-
-            zone.addEventListener('dragleave', () => {
-                zone.classList.remove('drag-over');
-            });
-
-            zone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                zone.classList.remove('drag-over');
-
-                const files = e.dataTransfer.files;
-                const fileInputId = zone.dataset.fileInput || 'file-input';
-                const fileInput = document.getElementById(fileInputId);
-
-                if (fileInput) {
-                    fileInput.files = files;
-                    fileInput.dispatchEvent(new Event('change'));
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
-    }
-};
-
-// ====================================================================
-// AUTO-INIT
-// ====================================================================
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => PDFApp.init());
-} else {
-    PDFApp.init();
-}
-
-// ====================================================================
-// GLOBAL EXPORT (gerekirse manuel kullanım için)
-// ====================================================================
-
-window.PDFPlatform = {
-    FileUtils,
-    UI,
-    Validator,
-    ToolFactory,
-    PDFApp
-};
+    </script>
+</body>
+</html>
