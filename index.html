@@ -1,451 +1,650 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Platform - Ücretsiz Online PDF Araçları</title>
-    <meta name="description" content="Güvenli ve ücretsiz PDF araçları. PDF birleştir, böl, sıkıştır. Dosyalarınız sunucuya yüklenmez.">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-</head>
-<body>
-    <!-- Cookie Banner -->
-    <div class="cookie-banner" id="cookieBanner">
-        <div class="cookie-content">
-            <div class="cookie-text">
-                <i class="fas fa-cookie-bite"></i>
-                <p>Bu site çerezler kullanır. <a href="cookie-policy.html">Çerez Politikası</a></p>
-            </div>
-            <div class="cookie-buttons">
-                <button class="btn btn-secondary btn-sm" id="cookieDecline">Reddet</button>
-                <button class="btn btn-primary btn-sm" id="cookieAccept">Kabul</button>
-            </div>
-        </div>
-    </div>
+/**
+ * PDF Platform - Core Script
+ * Tarayıcı tabanlı PDF işlemleri için merkezi kontrol
+ */
 
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="index.html" class="logo">
-                    <i class="fas fa-file-pdf"></i>
-                    <span>PDF Platform</span>
-                </a>
-                <button class="mobile-menu-toggle" id="mobileMenuToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <nav class="nav" id="mainNav">
-                    <a href="#tools" class="nav-link">Araçlar</a>
-                    <a href="articles/">Blog</a>
-                    <a href="about.html" class="nav-link">Hakkımızda</a>
-                    <a href="#articles" class="nav-link">Blog</a>
-                    <a href="faq.html" class="nav-link">SSS</a>
-                    <a href="contact.html" class="nav-link">İletişim</a>
-                </nav>
-            </div>
-        </div>
-    </header>
+// ====================================================================
+// CONSTANTS - Sihirli sayılar yerine sabitler
+// ====================================================================
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title">Dosyalarınız Hiçbir Zaman Sunucuya Yüklenmez</h1>
-                <p class="hero-subtitle">PDF dosyalarınızı birleştirin, bölün, sıkıştırın. %100 tarayıcı tabanlı.</p>
-                <div class="hero-badges">
-                    <div class="badge"><i class="fas fa-shield-halved"></i><span>Güvenli</span></div>
-                    <div class="badge"><i class="fas fa-bolt"></i><span>Hızlı</span></div>
-                    <div class="badge"><i class="fas fa-gift"></i><span>Ücretsiz</span></div>
-                </div>
-                <a href="#tools" class="btn btn-primary btn-hero">Araçları Keşfet</a>
-            </div>
-        </div>
-    </section>
+const CONFIG = {
+    MAX_FILE_SIZE: 50 * 1024 * 1024, // 50 MB
+    MAX_FILES_COUNT: 20,
+    ALLOWED_EXTENSIONS: ['pdf', 'jpg', 'jpeg', 'png'],
+    ANIMATION_DURATION: 300,
+    SUCCESS_MESSAGE_DURATION: 3000
+};
 
-    <!-- AdSense Top -->
-    <div class="ad-container">
-        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    </div>
+const MESSAGES = {
+    noFile: 'Lütfen bir dosya seçin',
+    invalidFormat: 'Desteklenmeyen dosya formatı',
+    fileTooLarge: 'Dosya çok büyük (maksimum 50 MB)',
+    tooManyFiles: 'En fazla 20 dosya seçebilirsiniz',
+    processing: 'İşleniyor...',
+    success: 'Tamamlandı! Dosyanız indiriliyor',
+    error: 'Bir sorun oluştu. Lütfen tekrar deneyin',
+    selectFiles: 'Dosyaları sürükleyin veya tıklayın'
+};
 
-    <!-- Tools -->
-    <main>
-        <section class="tools-section" id="tools">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">PDF Araçları</h2>
-                    <p class="section-subtitle">İhtiyacınız olan tüm PDF işlemlerini tek yerden yapın</p>
-                </div>
-                <div class="tools-grid">
-                    <a href="pages.html?tool=merge" class="tool-card">
-                        <div class="tool-icon"><i class="fas fa-object-group"></i></div>
-                        <h3 class="tool-title">PDF Birleştir</h3>
-                        <p class="tool-description">Birden fazla PDF'yi birleştirin</p>
-                    </a>
+// ====================================================================
+// CORE UTILITIES - Temel yardımcı fonksiyonlar
+// ====================================================================
 
-                    <a href="pages.html?tool=split" class="tool-card">
-                        <div class="tool-icon"><i class="fas fa-scissors"></i></div>
-                        <h3 class="tool-title">PDF Böl</h3>
-                        <p class="tool-description">PDF'yi sayfalara ayırın</p>
-                    </a>
+const FileUtils = {
+    /**
+     * Dosya adı oluşturur: dosya_merge_2026-02-11.pdf
+     */
+    generateFilename(originalName, operation) {
+        const baseName = this.removeExtension(originalName);
+        const timestamp = this.getTimestamp();
+        const extension = this.getExtension(originalName);
+        
+        return `${baseName}_${operation}_${timestamp}.${extension}`;
+    },
 
-                    <a href="pages.html?tool=compress" class="tool-card">
-                        <div class="tool-icon"><i class="fas fa-compress"></i></div>
-                        <h3 class="tool-title">PDF Sıkıştır</h3>
-                        <p class="tool-description">Dosya boyutunu küçültün</p>
-                    </a>
+    /**
+     * Dosya uzantısını al
+     */
+    getExtension(filename) {
+        return filename.split('.').pop().toLowerCase();
+    },
 
-                    <a href="pages.html?tool=pdf-to-jpg" class="tool-card">
-                        <div class="tool-icon"><i class="fas fa-file-image"></i></div>
-                        <h3 class="tool-title">PDF'den JPG</h3>
-                        <p class="tool-description">PDF'yi resimlere çevirin</p>
-                    </a>
+    /**
+     * Dosya adından uzantıyı kaldır
+     */
+    removeExtension(filename) {
+        return filename.replace(/\.[^/.]+$/, '');
+    },
 
-                    <a href="pages.html?tool=jpg-to-pdf" class="tool-card">
-                        <div class="tool-icon"><i class="fas fa-file-pdf"></i></div>
-                        <h3 class="tool-title">JPG'den PDF</h3>
-                        <p class="tool-description">Resimleri PDF yapın</p>
-                    </a>
+    /**
+     * Timestamp üret: 2026-02-11
+     */
+    getTimestamp() {
+        const now = new Date();
+        return now.toISOString().split('T')[0];
+    },
 
-                    <a href="pages.html?tool=rotate" class="tool-card">
-                        <div class="tool-icon"><i class="fas fa-rotate"></i></div>
-                        <h3 class="tool-title">PDF Döndür</h3>
-                        <p class="tool-description">Sayfaları döndürün</p>
-                    </a>
+    /**
+     * Dosya uzantısını doğrula
+     */
+    isValidExtension(filename) {
+        const ext = this.getExtension(filename);
+        return CONFIG.ALLOWED_EXTENSIONS.includes(ext);
+    },
 
-                    <a href="pages.html?tool=delete-pages" class="tool-card">
-                        <div class="tool-icon"><i class="fas fa-trash-alt"></i></div>
-                        <h3 class="tool-title">Sayfa Sil</h3>
-                        <p class="tool-description">İstenmeyen sayfaları kaldırın</p>
-                    </a>
+    /**
+     * Dosya boyutunu kontrol et
+     */
+    isValidSize(file) {
+        return file.size <= CONFIG.MAX_FILE_SIZE;
+    },
 
-                    <a href="pages.html?tool=reorder" class="tool-card">
-                        <div class="tool-icon"><i class="fas fa-sort"></i></div>
-                        <h3 class="tool-title">Sayfa Sırala</h3>
-                        <p class="tool-description">Sayfa sırasını değiştirin</p>
-                    </a>
+    /**
+     * İnsan okunabilir dosya boyutu: 2.5 MB
+     */
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+};
 
-                    <a href="pages.html?tool=lock" class="tool-card">
-                        <div class="tool-icon"><i class="fas fa-lock"></i></div>
-                        <h3 class="tool-title">PDF Kilitle</h3>
-                        <p class="tool-description">Şifre ile koruyun</p>
-                    </a>
+// ====================================================================
+// UI CONTROLLER - Kullanıcı arayüzü yönetimi
+// ====================================================================
 
-                    <a href="pages.html?tool=add-qr" class="tool-card">
-                        <div class="tool-icon"><i class="fas fa-qrcode"></i></div>
-                        <h3 class="tool-title">QR Kod Ekle</h3>
-                        <p class="tool-description">PDF'ye QR kod ekleyin</p>
-                    </a>
-                </div>
-            </div>
-        </section>
+const UI = {
+    /**
+     * Başarı mesajı göster
+     */
+    showSuccess(message = MESSAGES.success) {
+        this.showMessage(message, 'success');
+    },
 
-        <!-- Security Section -->
-        <section class="security-section">
-            <div class="container">
-                <div class="security-content">
-                    <div class="security-icon"><i class="fas fa-shield-halved"></i></div>
-                    <h2>Neden Serverless PDF Araçları?</h2>
-                    <p class="lead">Dosyalarınız hiçbir zaman sunucuya yüklenmez.</p>
-                    <div class="security-features">
-                        <div class="security-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <h3>Tarayıcı Tabanlı</h3>
-                                <p>Tüm işlemler JavaScript ile tarayıcınızda gerçekleşir.</p>
-                            </div>
-                        </div>
-                        <div class="security-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <h3>Sıfır Veri Toplama</h3>
-                                <p>Dosyalarınızı göremeyiz, saklayamayız.</p>
-                            </div>
-                        </div>
-                        <div class="security-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <h3>Offline Çalışma</h3>
-                                <p>İnternet olmadan da çalışır.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    /**
+     * Hata mesajı göster
+     */
+    showError(message = MESSAGES.error) {
+        this.showMessage(message, 'error');
+    },
 
-        <!-- AdSense Content -->
-        <div class="ad-container">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="9876543210" data-ad-format="auto" data-full-width-responsive="true"></ins>
-        </div>
+    /**
+     * Bilgi mesajı göster
+     */
+    showInfo(message) {
+        this.showMessage(message, 'info');
+    },
 
-        <!-- Articles -->
-        <section class="articles-section" id="articles">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Blog ve Rehberler</h2>
-                    <p class="section-subtitle">PDF yönetiminde uzmanlaşmak için kapsamlı rehberler</p>
-                </div>
-                <div class="articles-grid">
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-object-group"></i></div>
-                        <h3><a href="articles/pdf-birlestirme-rehberi.html">PDF Birleştirme Rehberi</a></h3>
-                        <p>Güvenli PDF birleştirme yöntemleri</p>
-                        <a href="articles/pdf-birlestirme-rehberi.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-compress"></i></div>
-                        <h3><a href="articles/pdf-sikistirma-rehberi.html">PDF Sıkıştırma</a></h3>
-                        <p>Dosya boyutunu küçültme teknikleri</p>
-                        <a href="articles/pdf-sikistirma-rehberi.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-scissors"></i></div>
-                        <h3><a href="articles/pdf-bolme-teknikleri.html">PDF Bölme Teknikleri</a></h3>
-                        <p>Sayfaları ayırma rehberi</p>
-                        <a href="articles/pdf-bolme-teknikleri.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-file-image"></i></div>
-                        <h3><a href="articles/jpg-pdf-donusturme.html">JPG'den PDF'ye</a></h3>
-                        <p>Resim dönüştürme rehberi</p>
-                        <a href="articles/jpg-pdf-donusturme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-image"></i></div>
-                        <h3><a href="articles/pdf-jpg-donusturme.html">PDF'den JPG'ye</a></h3>
-                        <p>PDF'yi resim formatına çevirme</p>
-                        <a href="articles/pdf-jpg-donusturme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-lock"></i></div>
-                        <h3><a href="articles/pdf-sifreleme-guvenlik.html">PDF Şifreleme</a></h3>
-                        <p>Belgelerinizi güvenli tutun</p>
-                        <a href="articles/pdf-sifreleme-guvenlik.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-edit"></i></div>
-                        <h3><a href="articles/pdf-form-doldurma.html">PDF Form Doldurma</a></h3>
-                        <p>İnteraktif form kullanımı</p>
-                        <a href="articles/pdf-form-doldurma.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-rotate"></i></div>
-                        <h3><a href="articles/pdf-dondurme.html">PDF Döndürme</a></h3>
-                        <p>Sayfa yönlendirme teknikleri</p>
-                        <a href="articles/pdf-dondurme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-trash-alt"></i></div>
-                        <h3><a href="articles/pdf-sayfa-silme.html">Sayfa Silme</a></h3>
-                        <p>Gereksiz sayfaları kaldırın</p>
-                        <a href="articles/pdf-sayfa-silme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-sort"></i></div>
-                        <h3><a href="articles/pdf-sayfa-siralama.html">Sayfa Sıralama</a></h3>
-                        <p>Sayfaları yeniden düzenleyin</p>
-                        <a href="articles/pdf-sayfa-siralama.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-qrcode"></i></div>
-                        <h3><a href="articles/qr-kod-pdf.html">QR Kod ile PDF</a></h3>
-                        <p>QR kod oluşturma ve kullanımı</p>
-                        <a href="articles/qr-kod-pdf.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-info-circle"></i></div>
-                        <h3><a href="articles/pdf-metadata.html">PDF Metadata</a></h3>
-                        <p>Dosya bilgilerini düzenleme</p>
-                        <a href="articles/pdf-metadata.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-eye"></i></div>
-                        <h3><a href="articles/pdf-okunabilirlik.html">PDF Okunabilirlik</a></h3>
-                        <p>Daha okunabilir belgeler</p>
-                        <a href="articles/pdf-okunabilirlik.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-signature"></i></div>
-                        <h3><a href="articles/pdf-dijital-imza.html">Dijital İmza</a></h3>
-                        <p>Belgeleri dijital olarak imzalayın</p>
-                        <a href="articles/pdf-dijital-imza.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-layer-group"></i></div>
-                        <h3><a href="articles/pdf-toplu-isleme.html">Toplu İşleme</a></h3>
-                        <p>Birden fazla dosyayı aynı anda</p>
-                        <a href="articles/pdf-toplu-isleme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-archive"></i></div>
-                        <h3><a href="articles/pdf-arsivleme.html">PDF Arşivleme</a></h3>
-                        <p>Uzun dönem saklama için PDF/A</p>
-                        <a href="articles/pdf-arsivleme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-universal-access"></i></div>
-                        <h3><a href="articles/pdf-erisilebilirlik.html">PDF Erişilebilirlik</a></h3>
-                        <p>Herkes için erişilebilir PDF'ler</p>
-                        <a href="articles/pdf-erisilebilirlik.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-file-alt"></i></div>
-                        <h3><a href="articles/pdf-a-formati.html">PDF/A Formatı</a></h3>
-                        <p>Arşivleme için standart format</p>
-                        <a href="articles/pdf-a-formati.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-mobile-alt"></i></div>
-                        <h3><a href="articles/mobilde-pdf-isleme.html">Mobilde PDF İşleme</a></h3>
-                        <p>Telefonunuzdan PDF yönetimi</p>
-                        <a href="articles/mobilde-pdf-isleme.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                    <article class="article-card">
-                        <div class="article-icon"><i class="fas fa-print"></i></div>
-                        <h3><a href="articles/pdf-yazdirma.html">PDF Yazdırma</a></h3>
-                        <p>Mükemmel baskı sonuçları</p>
-                        <a href="articles/pdf-yazdirma.html" class="article-link">Devamını Oku <i class="fas fa-arrow-right"></i></a>
-                    </article>
-                </div>
-            </div>
-        </section>
-    </main>
+    /**
+     * Genel mesaj gösterici
+     */
+    showMessage(text, type) {
+        // Mevcut mesajları temizle
+        this.clearMessages();
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="footer-logo">
-                        <i class="fas fa-file-pdf"></i>
-                        <span>PDF Platform</span>
-                    </div>
-                    <p>Güvenli PDF işlemleri</p>
-                    <div class="security-badges">
-                        <div class="security-badge">
-                            <i class="fas fa-server"></i>
-                            <span>Sunucusuz İşlem</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h4>Şirket</h4>
-                    <ul class="footer-links">
-                        <li><a href="about.html">Hakkımızda</a></li>
-                        <li><a href="contact.html">İletişim</a></li>
-                        <li><a href="faq.html">SSS</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Yasal</h4>
-                    <ul class="footer-links">
-                        <li><a href="cookie-policy.html">Çerez Politikası</a></li>
-                        <li><a href="#privacy">Gizlilik</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 PDF Platform</p>
-            </div>
-        </div>
-    </footer>
+        const messageEl = document.createElement('div');
+        messageEl.className = `message message-${type}`;
+        messageEl.textContent = text;
+        messageEl.setAttribute('role', 'alert');
 
-    <!-- JavaScript -->
-    <script>
-        // Cookie Banner
-        (function() {
-            const cookieBanner = document.getElementById('cookieBanner');
-            const cookieAccept = document.getElementById('cookieAccept');
-            const cookieDecline = document.getElementById('cookieDecline');
-            
-            if (cookieBanner && cookieAccept && cookieDecline) {
-                const cookieConsent = localStorage.getItem('cookie_consent');
+        // Sayfada #message-container varsa oraya ekle
+        const container = document.getElementById('message-container') || document.body;
+        container.appendChild(messageEl);
+
+        // Animasyon
+        setTimeout(() => messageEl.classList.add('show'), 10);
+
+        // Başarı mesajları otomatik kaybolsun
+        if (type === 'success') {
+            setTimeout(() => this.removeMessage(messageEl), CONFIG.SUCCESS_MESSAGE_DURATION);
+        }
+    },
+
+    /**
+     * Mesajı kaldır
+     */
+    removeMessage(messageEl) {
+        messageEl.classList.remove('show');
+        setTimeout(() => messageEl.remove(), CONFIG.ANIMATION_DURATION);
+    },
+
+    /**
+     * Tüm mesajları temizle
+     */
+    clearMessages() {
+        document.querySelectorAll('.message').forEach(msg => msg.remove());
+    },
+
+    /**
+     * Loading durumu göster/gizle
+     */
+    setLoading(isLoading, buttonEl) {
+        if (!buttonEl) return;
+
+        if (isLoading) {
+            buttonEl.disabled = true;
+            buttonEl.dataset.originalText = buttonEl.textContent;
+            buttonEl.textContent = MESSAGES.processing;
+            buttonEl.classList.add('loading');
+        } else {
+            buttonEl.disabled = false;
+            buttonEl.textContent = buttonEl.dataset.originalText || buttonEl.textContent;
+            buttonEl.classList.remove('loading');
+        }
+    },
+
+    /**
+     * Dosya listesi önizlemesi
+     */
+    renderFileList(files, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        Array.from(files).forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <span class="file-name">${file.name}</span>
+                <span class="file-size">${FileUtils.formatFileSize(file.size)}</span>
+                <button class="remove-file" data-index="${index}">×</button>
+            `;
+            container.appendChild(fileItem);
+        });
+    }
+};
+
+// ====================================================================
+// VALIDATOR - Dosya doğrulama
+// ====================================================================
+
+const Validator = {
+    /**
+     * Dosya seçimi yapıldı mı?
+     */
+    hasFiles(files) {
+        if (!files || files.length === 0) {
+            UI.showError(MESSAGES.noFile);
+            return false;
+        }
+        return true;
+    },
+
+    /**
+     * Dosya sayısı sınırında mı?
+     */
+    checkFileCount(files) {
+        if (files.length > CONFIG.MAX_FILES_COUNT) {
+            UI.showError(MESSAGES.tooManyFiles);
+            return false;
+        }
+        return true;
+    },
+
+    /**
+     * Tüm dosyaları doğrula
+     */
+    validateFiles(files) {
+        if (!this.hasFiles(files)) return false;
+        if (!this.checkFileCount(files)) return false;
+
+        for (let file of files) {
+            if (!FileUtils.isValidExtension(file.name)) {
+                UI.showError(`${MESSAGES.invalidFormat}: ${file.name}`);
+                return false;
+            }
+
+            if (!FileUtils.isValidSize(file)) {
+                UI.showError(`${MESSAGES.fileTooLarge}: ${file.name}`);
+                return false;
+            }
+        }
+
+        return true;
+    },
+
+    /**
+     * Tek dosya doğrula
+     */
+    validateSingleFile(file) {
+        return this.validateFiles([file]);
+    }
+};
+
+// ====================================================================
+// DOWNLOAD MANAGER - Dosya indirme yönetimi
+// ====================================================================
+
+const DownloadManager = {
+    /**
+     * Blob'u indir
+     */
+    downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+
+        // Cleanup
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+    },
+
+    /**
+     * Base64'ü indir
+     */
+    downloadBase64(base64Data, filename, mimeType = 'application/pdf') {
+        const byteString = atob(base64Data.split(',')[1]);
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+
+        const blob = new Blob([ab], { type: mimeType });
+        this.downloadBlob(blob, filename);
+    }
+};
+
+// ====================================================================
+// PDF PROCESSOR - PDF işlemleri için temel sınıf
+// ====================================================================
+
+class PDFProcessor {
+    constructor(operation) {
+        this.operation = operation;
+    }
+
+    /**
+     * İşlem başlat
+     */
+    async process(files, options = {}) {
+        try {
+            // Doğrulama
+            if (!Validator.validateFiles(files)) {
+                return;
+            }
+
+            // UI feedback
+            UI.clearMessages();
+            const button = options.button;
+            if (button) UI.setLoading(true, button);
+
+            // İşlem yap
+            const result = await this.execute(files, options);
+
+            // Başarılı
+            if (result) {
+                UI.showSuccess();
                 
-                if (!cookieConsent) {
-                    setTimeout(() => {
-                        cookieBanner.classList.add('show');
-                    }, 1000);
+                // İndirme
+                if (result.blob && result.filename) {
+                    DownloadManager.downloadBlob(result.blob, result.filename);
                 }
-                
-                cookieAccept.addEventListener('click', () => {
-                    localStorage.setItem('cookie_consent', 'accepted');
-                    cookieBanner.classList.remove('show');
-                    setTimeout(() => {
-                        cookieBanner.style.display = 'none';
-                    }, 300);
-                });
-                
-                cookieDecline.addEventListener('click', () => {
-                    localStorage.setItem('cookie_consent', 'declined');
-                    cookieBanner.classList.remove('show');
-                    setTimeout(() => {
-                        cookieBanner.style.display = 'none';
-                    }, 300);
-                });
             }
-        })();
 
-        // Mobile Menu Toggle
-        (function() {
-            const menuToggle = document.getElementById('mobileMenuToggle');
-            const mainNav = document.getElementById('mainNav');
-            
-            if (menuToggle && mainNav) {
-                menuToggle.addEventListener('click', () => {
-                    mainNav.classList.toggle('show');
-                    const icon = menuToggle.querySelector('i');
-                    if (icon) {
-                        icon.classList.toggle('fa-bars');
-                        icon.classList.toggle('fa-times');
-                    }
-                });
-                
-                // Close menu when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!menuToggle.contains(e.target) && !mainNav.contains(e.target)) {
-                        mainNav.classList.remove('show');
-                        const icon = menuToggle.querySelector('i');
-                        if (icon) {
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }
-                    }
-                });
+        } catch (error) {
+            console.error('PDF işlem hatası:', error);
+            UI.showError(error.message || MESSAGES.error);
+        } finally {
+            if (options.button) {
+                UI.setLoading(false, options.button);
             }
-        })();
+        }
+    }
 
-        // Smooth Scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const href = this.getAttribute('href');
-                if (href === '#' || href === '') return;
-                
+    /**
+     * Gerçek işlem - alt sınıflar override edecek
+     */
+    async execute(files, options) {
+        throw new Error('execute() metodu override edilmeli');
+    }
+
+    /**
+     * Yardımcı: İlk dosyanın adını al
+     */
+    getBaseFilename(files) {
+        return files[0]?.name || 'document.pdf';
+    }
+
+    /**
+     * Yardımcı: Çıktı dosya adı üret
+     */
+    generateOutputFilename(inputFilename) {
+        return FileUtils.generateFilename(inputFilename, this.operation);
+    }
+}
+
+// ====================================================================
+// TOOL IMPLEMENTATIONS - PDF araçları
+// ====================================================================
+
+/**
+ * PDF Birleştirme
+ */
+class MergeTool extends PDFProcessor {
+    constructor() {
+        super('merged');
+    }
+
+    async execute(files, options) {
+        // pdf-lib kütüphanesi yüklü olmalı
+        if (typeof PDFLib === 'undefined') {
+            throw new Error('PDF kütüphanesi yüklenmedi');
+        }
+
+        const { PDFDocument } = PDFLib;
+        const mergedPdf = await PDFDocument.create();
+
+        for (let file of files) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await PDFDocument.load(arrayBuffer);
+            const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+            copiedPages.forEach((page) => mergedPdf.addPage(page));
+        }
+
+        const pdfBytes = await mergedPdf.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const filename = this.generateOutputFilename(this.getBaseFilename(files));
+
+        return { blob, filename };
+    }
+}
+
+/**
+ * PDF Sıkıştırma (metadata temizleme)
+ */
+class CompressTool extends PDFProcessor {
+    constructor() {
+        super('compressed');
+    }
+
+    async execute(files, options) {
+        if (typeof PDFLib === 'undefined') {
+            throw new Error('PDF kütüphanesi yüklenmedi');
+        }
+
+        const { PDFDocument } = PDFLib;
+        const file = files[0];
+
+        const arrayBuffer = await file.arrayBuffer();
+        const pdfDoc = await PDFDocument.load(arrayBuffer);
+
+        // Metadata temizle
+        pdfDoc.setTitle('');
+        pdfDoc.setAuthor('');
+        pdfDoc.setSubject('');
+        pdfDoc.setCreator('PDF Platform');
+        pdfDoc.setProducer('PDF Platform');
+
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const filename = this.generateOutputFilename(file.name);
+
+        return { blob, filename };
+    }
+}
+
+/**
+ * JPG'den PDF'e dönüştürme
+ */
+class JpgToPdfTool extends PDFProcessor {
+    constructor() {
+        super('converted');
+    }
+
+    async execute(files, options) {
+        if (typeof PDFLib === 'undefined') {
+            throw new Error('PDF kütüphanesi yüklenmedi');
+        }
+
+        const { PDFDocument } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+
+        for (let file of files) {
+            const arrayBuffer = await file.arrayBuffer();
+            const image = await (file.type === 'image/png' 
+                ? pdfDoc.embedPng(arrayBuffer) 
+                : pdfDoc.embedJpg(arrayBuffer));
+
+            const page = pdfDoc.addPage([image.width, image.height]);
+            page.drawImage(image, {
+                x: 0,
+                y: 0,
+                width: image.width,
+                height: image.height,
+            });
+        }
+
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        
+        const baseName = FileUtils.removeExtension(this.getBaseFilename(files));
+        const filename = `${baseName}_${this.operation}_${FileUtils.getTimestamp()}.pdf`;
+
+        return { blob, filename };
+    }
+}
+
+// ====================================================================
+// TOOL FACTORY - Araç fabrikası
+// ====================================================================
+
+const ToolFactory = {
+    tools: {
+        'merge': MergeTool,
+        'compress': CompressTool,
+        'jpg-to-pdf': JpgToPdfTool
+        // Yeni araçlar buraya eklenebilir
+    },
+
+    /**
+     * Araç oluştur
+     */
+    create(toolType) {
+        const ToolClass = this.tools[toolType];
+        
+        if (!ToolClass) {
+            throw new Error(`Bilinmeyen araç türü: ${toolType}`);
+        }
+
+        return new ToolClass();
+    },
+
+    /**
+     * Yeni araç kaydet
+     */
+    register(toolType, ToolClass) {
+        this.tools[toolType] = ToolClass;
+    }
+};
+
+// ====================================================================
+// MAIN APP CONTROLLER
+// ====================================================================
+
+const PDFApp = {
+    currentTool: null,
+
+    /**
+     * Uygulamayı başlat
+     */
+    init() {
+        this.setupEventListeners();
+        this.detectCurrentTool();
+    },
+
+    /**
+     * URL'den araç türünü tespit et
+     */
+    detectCurrentTool() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tool = urlParams.get('tool');
+        
+        if (tool) {
+            this.setTool(tool);
+        }
+    },
+
+    /**
+     * Aktif aracı ayarla
+     */
+    setTool(toolType) {
+        try {
+            this.currentTool = ToolFactory.create(toolType);
+        } catch (error) {
+            console.error('Araç yükleme hatası:', error);
+            this.currentTool = null;
+        }
+    },
+
+    /**
+     * Event listener'ları kur
+     */
+    setupEventListeners() {
+        // Dosya yükleme alanları
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', (e) => this.handleFileSelect(e));
+        });
+
+        // İşlem butonları
+        document.querySelectorAll('[data-action]').forEach(button => {
+            button.addEventListener('click', (e) => this.handleAction(e));
+        });
+
+        // Drag & Drop
+        this.setupDragAndDrop();
+    },
+
+    /**
+     * Dosya seçimi
+     */
+    handleFileSelect(event) {
+        const files = event.target.files;
+        
+        if (Validator.validateFiles(files)) {
+            UI.renderFileList(files, 'file-list');
+        }
+    },
+
+    /**
+     * Aksiyon butonları
+     */
+    handleAction(event) {
+        const button = event.target;
+        const action = button.dataset.action;
+        const fileInputId = button.dataset.fileInput || 'file-input';
+        const fileInput = document.getElementById(fileInputId);
+
+        if (!fileInput) {
+            console.error('Dosya input elementi bulunamadı');
+            return;
+        }
+
+        const files = fileInput.files;
+
+        if (this.currentTool) {
+            this.currentTool.process(files, { button });
+        } else {
+            UI.showError('Araç yüklenemedi');
+        }
+    },
+
+    /**
+     * Drag & Drop kurulumu
+     */
+    setupDragAndDrop() {
+        const dropZones = document.querySelectorAll('.drop-zone');
+
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    
-                    // Close mobile menu if open
-                    const mainNav = document.getElementById('mainNav');
-                    if (mainNav && mainNav.classList.contains('show')) {
-                        mainNav.classList.remove('show');
-                        const icon = document.querySelector('#mobileMenuToggle i');
-                        if (icon) {
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }
-                    }
+                zone.classList.add('drag-over');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+
+                const files = e.dataTransfer.files;
+                const fileInputId = zone.dataset.fileInput || 'file-input';
+                const fileInput = document.getElementById(fileInputId);
+
+                if (fileInput) {
+                    fileInput.files = files;
+                    fileInput.dispatchEvent(new Event('change'));
                 }
             });
         });
-    </script>
-    
-    <!-- AdSense Script -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</body>
-</html>
+    }
+};
+
+// ====================================================================
+// AUTO-INIT
+// ====================================================================
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => PDFApp.init());
+} else {
+    PDFApp.init();
+}
+
+// ====================================================================
+// GLOBAL EXPORT (gerekirse manuel kullanım için)
+// ====================================================================
+
+window.PDFPlatform = {
+    FileUtils,
+    UI,
+    Validator,
+    ToolFactory,
+    PDFApp
+};
