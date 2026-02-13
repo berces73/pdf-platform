@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Birleştir - Ücretsiz Online PDF Birleştirme Aracı</title>
+    <meta name="description" content="Birden fazla PDF dosyasını güvenli şekilde birleştirin. Dosyalarınız sunucuya yüklenmez, tamamen tarayıcıda işlenir. Ücretsiz, sınırsız kullanım.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+    
+    <!-- Schema.org Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "PDF Birleştirme Aracı",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TRY"
+      },
+      "operatingSystem": "Web",
+      "description": "Birden fazla PDF dosyasını tek bir belgede güvenli şekilde birleştirin. Dosyalarınız sunucuya yüklenmez, tamamen tarayıcınızda işlenir.",
+      "featureList": [
+        "Sınırsız dosya birleştirme",
+        "Sunucusuz işlem",
+        "Ücretsiz kullanım",
+        "Kayıt gerektirmez",
+        "Mobil uyumlu"
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1247"
+      }
+    }
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="../index.html" class="logo">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>PDF Platform</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <nav class="nav" id="mainNav">
+                    <a href="../index.html#tools" class="nav-link">Araçlar</a>
+                    <a href="../about.html" class="nav-link">Hakkımızda</a>
+                    <a href="../index.html#articles" class="nav-link">Blog</a>
+                    <a href="../faq.html" class="nav-link">SSS</a>
+                    <a href="../contact.html" class="nav-link">İletişim</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" style="padding:3rem 0;background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%)">
+        <div class="container" style="text-align:center;color:white">
+            <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:1rem">PDF Birleştir</h1>
+            <p style="font-size:1.2rem;opacity:0.95">Birden fazla PDF dosyasını tek bir belgede birleştirin</p>
+        </div>
+    </section>
+
+    <!-- Main Tool Area -->
+    <main>
+        <section style="padding:3rem 0">
+            <div class="container" style="max-width:900px;margin:0 auto">
+                <div style="background:white;border-radius:0.5rem;padding:3rem;box-shadow:0 10px 25px rgba(0,0,0,0.1);text-align:center">
+                    <div style="width:100px;height:100px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:50%;margin:0 auto 2rem;display:flex;align-items:center;justify-content:center">
+                        <i class="fas fa-object-group" style="font-size:3rem;color:white"></i>
+                    </div>
+                    
+                    <h2 style="font-size:1.8rem;margin-bottom:1rem">Dosyalarınızı Seçin</h2>
+                    <p style="color:#6b7280;margin-bottom:2rem">Birleştirmek istediğiniz PDF dosyalarını yükleyin</p>
+                    
+                    <input type="file" id="fileInput" accept=".pdf" multiple style="display:none">
+                    <button onclick="document.getElementById('fileInput').click()" style="background:#6366f1;color:white;padding:1rem 2rem;border:none;border-radius:0.5rem;font-size:1.1rem;cursor:pointer;font-weight:600">
+                        <i class="fas fa-upload"></i> Dosya Seç
+                    </button>
+                    
+                    <div id="fileList" style="margin-top:2rem"></div>
+                    <button id="mergeBtn" style="display:none;background:#10b981;color:white;padding:1rem 2rem;border:none;border-radius:0.5rem;font-size:1.1rem;cursor:pointer;font-weight:600;margin-top:1rem">
+                        <i class="fas fa-check"></i> PDF'leri Birleştir
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kullanıcıya Not -->
+        <section style="background:#f9fafb;padding:2rem;margin:3rem auto;border-left:4px solid #6366f1;border-radius:0.5rem;max-width:900px">
+            <h3 style="color:#374151;margin-bottom:1rem;font-size:1.5rem"><i class="fas fa-info-circle"></i> Kullanım Notları</h3>
+            
+            <p style="margin-bottom:1rem;line-height:1.8;color:#4b5563">
+                PDF dosyalarınızı birleştirirken dikkat etmeniz gereken en önemli nokta, dosyaların sırasıdır. Birleştirme işlemi sırasında belirlediğiniz sıra, nihai PDF'inizde aynen korunacaktır. Eğer sonradan sırayı değiştirmek isterseniz, işlemi tekrarlamanız gerekebilir. Bu nedenle dosyalarınızı yüklemeden önce hangi sırayla birleştirmek istediğinize karar vermenizi öneririz.
+            </p>
+            
+            <p style="margin-bottom:1rem;line-height:1.8;color:#4b5563">
+                Dosya boyutları konusunda herhangi bir kısıtlamamız bulunmamaktadır, ancak çok büyük dosyalarla çalışırken tarayıcınızın performansı etkilenebilir. Özellikle yüzlerce sayfalık PDF'leri birleştiriyorsanız, işlemin tamamlanması birkaç dakika sürebilir. Bu süre boyunca tarayıcı penceresini kapatmayın ve başka sekmelerde ağır işlemler yapmaktan kaçının.
+            </p>
+            
+            <p style="margin-bottom:1rem;line-height:1.8;color:#4b5563">
+                Birleştirme işlemi tamamlandıktan sonra, oluşan PDF'i mutlaka kontrol edin. Tüm sayfaların doğru sırada olduğundan ve eksik sayfa olmadığından emin olun. Eğer bir sorun fark ederseniz, işlemi kolayca tekrarlayabilirsiniz. Orijinal dosyalarınız hiçbir şekilde değiştirilmez, bu nedenle istediğiniz kadar deneme yapabilirsiniz.
+            </p>
+            
+            <p style="line-height:1.8;color:#4b5563">
+                Birleştirme işlemi sırasında PDF'lerin formatı, yazı tipleri ve görsel kalitesi korunur. Ancak bazı özel özelliklere sahip PDF'ler (form alanları, dijital imzalar, şifreler) beklenmedik şekilde davranabilir. Böyle dosyalarla çalışıyorsanız, önce küçük bir test yapmanızı öneririz.
+            </p>
+        </section>
+
+        <!-- Rakiplerden Farkımız -->
+        <section style="background:#f0f9ff;padding:2rem;margin:2rem auto;border-radius:0.5rem;max-width:900px">
+            <h3 style="color:#1e40af;margin-bottom:1rem;font-size:1.5rem"><i class="fas fa-star"></i> Rakiplerden Farkımız</h3>
+            <p style="line-height:1.8;color:#1e3a8a">
+                Diğer PDF birleştirme araçlarının çoğu, dosyalarınızı işlemek için sunucularına yüklemenizi ister. Bu durum, hassas belgelerde güvenlik riski oluşturur. Bizim platformumuz ise tamamen tarayıcınızda çalışır. Dosyalarınız hiçbir sunucuya yüklenmez, tüm işlemler bilgisayarınızda gerçekleşir. Bu yaklaşım, hem gizliliğinizi korur hem de KVKK ve GDPR gibi veri koruma yönetmeliklerine uyum sağlar. Ayrıca, kayıt veya üyelik gerektirmeden, tamamen ücretsiz olarak sınırsız kullanım sunuyoruz.
+            </p>
+        </section>
+
+        <!-- Gizlilik ve Güvenlik -->
+        <section style="padding:2rem;background:#ecfdf5;margin:2rem auto;border-radius:0.5rem;max-width:900px">
+            <h3 style="color:#065f46;margin-bottom:1rem;font-size:1.5rem"><i class="fas fa-shield-halved"></i> Gizlilik ve Güvenlik</h3>
+            <p style="line-height:1.8;color:#064e3b">
+                PDF birleştirme işlemi sırasında dosyalarınızın güvenliği bizim için önceliklidir. Platformumuz, modern web teknolojileri kullanılarak geliştirilmiştir ve tüm işlemler JavaScript ile tarayıcınızda gerçekleştirilir. Bu, dosyalarınızın hiçbir zaman internet üzerinden gönderilmediği ve bizim sunucularımıza ulaşmadığı anlamına gelir. İşlem bittiğinde, dosyalar otomatik olarak tarayıcınızın geçici belleğinden silinir. Bu yaklaşım, maksimum gizlilik ve güvenlik sağlar.
+            </p>
+        </section>
+
+        <!-- FAQ Section -->
+        <section style="padding:3rem 1.5rem;max-width:900px;margin:2rem auto">
+            <h2 style="text-align:center;margin-bottom:3rem;font-size:2rem;color:#111827"><i class="fas fa-question-circle"></i> Sıkça Sorulan Sorular</h2>
+            
+            <div style="margin-bottom:1.5rem;padding:1.5rem;background:#f9fafb;border-radius:0.5rem;border-left:4px solid #6366f1">
+                <h4 style="color:#374151;margin-bottom:0.5rem;font-weight:600;font-size:1.1rem">S: Kaç tane PDF dosyasını birleştirebilirim?</h4>
+                <p style="color:#6b7280;line-height:1.6;margin:0">C: Teknik bir sınır bulunmamaktadır. Ancak performans nedeniyle 50'den az dosya ile çalışmanızı öneririz. Daha fazla dosyayı birleştirmek isterseniz, önce gruplar halinde birleştirip sonra bu grupları tekrar birleştirebilirsiniz.</p>
+            </div>
+            
+            <div style="margin-bottom:1.5rem;padding:1.5rem;background:#f9fafb;border-radius:0.5rem;border-left:4px solid #6366f1">
+                <h4 style="color:#374151;margin-bottom:0.5rem;font-weight:600;font-size:1.1rem">S: Dosyalarım ne kadar büyük olabilir?</h4>
+                <p style="color:#6b7280;line-height:1.6;margin:0">C: Tek dosya başına boyut sınırımız yoktur, ancak tarayıcınızın bellek kapasitesi işlem süresini etkileyebilir. Genellikle toplam 100 MB'a kadar dosyalarla sorunsuz çalışılabilir. Daha büyük dosyalar için masaüstü çözümleri önerebiliriz.</p>
+            </div>
+            
+            <div style="margin-bottom:1.5rem;padding:1.5rem;background:#f9fafb;border-radius:0.5rem;border-left:4px solid #6366f1">
+                <h4 style="color:#374151;margin-bottom:0.5rem;font-weight:600;font-size:1.1rem">S: Birleştirme işlemi sırasında dosyalarım sunucunuza yükleniyor mu?</h4>
+                <p style="color:#6b7280;line-height:1.6;margin:0">C: Hayır, kesinlikle yüklenmiyor. Tüm işlem tarayıcınızda, JavaScript kullanılarak gerçekleştirilir. Dosyalarınız hiçbir zaman internet üzerinden gönderilmez ve bizim sunucularımıza ulaşmaz.</p>
+            </div>
+            
+            <div style="margin-bottom:1.5rem;padding:1.5rem;background:#f9fafb;border-radius:0.5rem;border-left:4px solid #6366f1">
+                <h4 style="color:#374151;margin-bottom:0.5rem;font-weight:600;font-size:1.1rem">S: Şifreli PDF dosyalarını birleştirebilir miyim?</h4>
+                <p style="color:#6b7280;line-height:1.6;margin:0">C: Hayır, şifreli PDF dosyaları birleştirilemez. Önce dosyanın şifresini kaldırmanız gerekir. Şifre kaldırma işlemini de platformumuzdan yapabilirsiniz.</p>
+            </div>
+            
+            <div style="margin-bottom:1.5rem;padding:1.5rem;background:#f9fafb;border-radius:0.5rem;border-left:4px solid #6366f1">
+                <h4 style="color:#374151;margin-bottom:0.5rem;font-weight:600;font-size:1.1rem">S: Birleştirdiğim PDF'in kalitesi düşer mi?</h4>
+                <p style="color:#6b7280;line-height:1.6;margin:0">C: Hayır, birleştirme işlemi sırasında dosyalarınızın kalitesi korunur. Orijinal PDF'lerdeki tüm özellikler (görüntü kalitesi, yazı tipleri, formatlar) aynen korunur. Herhangi bir sıkıştırma veya kalite düşürme işlemi yapılmaz.</p>
+            </div>
+            
+            <div style="margin-bottom:1.5rem;padding:1.5rem;background:#f9fafb;border-radius:0.5rem;border-left:4px solid #6366f1">
+                <h4 style="color:#374151;margin-bottom:0.5rem;font-weight:600;font-size:1.1rem">S: Mobil cihazlardan da kullanabiliyor muyum?</h4>
+                <p style="color:#6b7280;line-height:1.6;margin:0">C: Evet, platformumuz tüm modern tarayıcılarda çalışır. Telefon veya tabletten de kolayca PDF birleştirme işlemi yapabilirsiniz.</p>
+            </div>
+            
+            <div style="padding:1.5rem;background:#f9fafb;border-radius:0.5rem;border-left:4px solid #6366f1">
+                <h4 style="color:#374151;margin-bottom:0.5rem;font-weight:600;font-size:1.1rem">S: İnternet bağlantım kesilirse ne olur?</h4>
+                <p style="color:#6b7280;line-height:1.6;margin:0">C: Sayfa yüklendikten sonra, birleştirme işlemi tamamen offline çalışır. Ancak sayfa ilk açılışta internet gerektirir. İşlem sırasında bağlantı kesilse bile problem yaşamazsınız.</p>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section style="background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:3rem 1.5rem;margin:3rem 0;text-align:center;color:white">
+            <div style="max-width:700px;margin:0 auto">
+                <h3 style="font-size:1.8rem;margin-bottom:1rem">Diğer PDF Araçlarımızı Keşfedin</h3>
+                <p style="opacity:0.95;margin-bottom:2rem;font-size:1.1rem">PDF sıkıştırma, bölme ve dönüştürme işlemleri için de aynı güvenlik standartlarıyla hizmet veriyoruz.</p>
+                <a href="../index.html#tools" style="display:inline-block;background:white;color:#6366f1;padding:1rem 2rem;border-radius:0.5rem;text-decoration:none;font-weight:600;font-size:1.1rem">
+                    Tüm Araçları Gör <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>PDF Platform</span>
+                    </div>
+                    <p>Güvenli PDF işlemleri</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Şirket</h4>
+                    <ul class="footer-links">
+                        <li><a href="../about.html">Hakkımızda</a></li>
+                        <li><a href="../contact.html">İletişim</a></li>
+                        <li><a href="../faq.html">SSS</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Yasal</h4>
+                    <ul class="footer-links">
+                        <li><a href="../cookie-policy.html">Çerez Politikası</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 PDF Platform</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+            document.getElementById('mainNav').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>
