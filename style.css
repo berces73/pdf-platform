@@ -265,6 +265,14 @@ body {
     font-size: 0.9rem;
 }
 
+.tool-meta {
+    display: block;
+    font-size: 0.75rem;
+    color: #10b981;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
 /* Security Section */
 .security-section {
     background: linear-gradient(to bottom, #f0f9ff, #e0f2fe);
@@ -641,4 +649,48 @@ button:focus {
 .loading {
     pointer-events: none;
     opacity: 0.6;
+}
+
+/* --- BREADCRUMB (YOL GÖSTERGESİ) STİLLERİ --- */
+.breadcrumb {
+    background: #f9fafb;
+    padding: 0.75rem 0;
+    font-size: 0.875rem;
+    margin-bottom: 2rem; /* Bunu ekledim: Altındaki başlıkla yapışmasın diye */
+}
+
+.breadcrumb ol {
+    display: flex;
+    list-style: none;
+    gap: 0.5rem;
+    padding: 0;          /* Bunu ekledim: Tarayıcı varsayılan boşluğunu sıfırla */
+    margin: 0;           /* Bunu ekledim: Düzgün hizalama için */
+}
+
+.breadcrumb li {         /* Bunu ekledim: Yan yana dizilmeyi garantiye al */
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb li:not(:last-child)::after {
+    content: '›';
+    margin-left: 0.5rem;
+    color: #9ca3af;
+    font-weight: bold;   /* Bunu ekledim: Ok işareti daha net görünsün */
+}
+
+.breadcrumb a {
+    color: #6366f1;
+    text-decoration: none;
+    transition: color 0.2s; /* Bunu ekledim: Üzerine gelince yumuşak renk değişimi */
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+    color: #4f46e5;      /* Bunu ekledim: Hover rengi biraz daha koyu olsun */
+}
+
+.breadcrumb li:last-child { /* Bunu ekledim: Son eleman (bulunduğun sayfa) gri olsun */
+    color: #6b7280;
+    pointer-events: none; /* Tıklanmasın */
 }
