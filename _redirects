@@ -1,3 +1,63 @@
-/*    /index.html   200
-https://www.pdf-platform.pages.dev/*  https://pdf-platform.pages.dev/:splat  301
-/.well-known/security.txt  /security.txt  200
+# PDF Platform - Redirects Configuration
+# Cloudflare Pages Redirects
+
+# ============================================
+# HTTPS REDIRECT (handled by Cloudflare)
+# ============================================
+# Already handled by Cloudflare - no need to add
+
+# ============================================
+# CLEAN URLS (Optional - if you want to remove .html)
+# ============================================
+# /pdf-birlestir    /tools/pdf-birlestir.html    200
+# /pdf-sikistir     /tools/pdf-sikistir.html     200
+# /pdf-bol          /tools/pdf-bol.html          200
+
+# ============================================
+# OLD URLs TO NEW (if you migrate)
+# ============================================
+# /merge-pdf        /tools/pdf-birlestir.html    301
+# /compress-pdf     /tools/pdf-sikistir.html     301
+# /split-pdf        /tools/pdf-bol.html          301
+
+# ============================================
+# LANGUAGE REDIRECTS (if multi-language)
+# ============================================
+# /en/*             /en/:splat                   200
+# /tr/*             /:splat                      200
+
+# ============================================
+# ERROR PAGES
+# ============================================
+# /404.html         /404.html                    404
+# /*                /index.html                  404
+
+# ============================================
+# TRAILING SLASH REDIRECT
+# ============================================
+# /tools/           /tools                       301!
+# /blog/            /blog                        301!
+
+# ============================================
+# CANONICAL REDIRECTS
+# ============================================
+# Redirect www to non-www (or vice versa) - handled by Cloudflare DNS
+
+# ============================================
+# AFFILIATE/TRACKING PARAMETER CLEANUP
+# ============================================
+# Remove tracking parameters but keep the page
+# /*  /:splat  200  Query=utm_source|utm_medium|utm_campaign|fbclid|gclid
+
+# ============================================
+# API VERSIONING (if applicable)
+# ============================================
+# /api/v1/*         /api/:splat                  200
+# /api/*            /api/v2/:splat               200
+
+# ============================================
+# LEGACY SUPPORT
+# ============================================
+# Add old domain redirects here if you migrate from another domain
+# Example:
+# https://old-domain.com/*  https://siteniz.com/:splat  301!

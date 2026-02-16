@@ -3,16 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Sayfa Bulunamadı</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    
+    <!-- ⭐ KRİTİK: Error sayfalar noindex olmalı -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    
+    <title>Sayfa Bulunamadı (404) - PDF Platform</title>
+    <meta name="description" content="Aradığınız sayfa bulunamadı veya taşınmış olabilir. Ana sayfaya dönün veya popüler PDF araçlarımızı keşfedin.">
+    
+    <!-- Canonical 404 sayfasına -->
+    <link rel="canonical" href="https://domain.com/404">
+    
+    <!-- Minimal styling -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .error-container {
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .error-code {
+            font-size: 120px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+            text-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 35px;
+            background: #fff;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            backdrop-filter: blur(10px);
+        }
+        
+        .popular-links {
+            margin-top: 50px;
+            padding-top: 50px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .popular-links h2 {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .link-card {
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .link-card:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-3px);
+        }
+        
+        .link-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .link-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .search-box {
+            margin-top: 40px;
+        }
+        
+        .search-input {
+            padding: 15px 20px;
+            width: 100%;
+            max-width: 400px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        @media (max-width: 600px) {
+            .error-code {
+                font-size: 80px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;">
-    <div>
-        <h1 style="font-size:6rem;margin:0;">404</h1>
-        <p style="font-size:1.5rem;">Sayfa Bulunamadı</p>
-        <a href="/" style="display:inline-block;margin-top:2rem;padding:1rem 2rem;background:white;color:#667eea;border-radius:0.5rem;text-decoration:none;font-weight:600;">Ana Sayfaya Dön</a>
+<body>
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <h1>Sayfa Bulunamadı</h1>
+        <p>
+            Aradığınız sayfa mevcut değil, taşınmış veya silinmiş olabilir.
+            Endişelenmeyin, size yardımcı olabiliriz!
+        </p>
+        
+        <div class="button-group">
+            <a href="/" class="btn">🏠 Ana Sayfaya Dön</a>
+            <button onclick="history.back()" class="btn btn-secondary">⬅️ Geri Git</button>
+        </div>
+        
+        <div class="search-box">
+            <form action="/search" method="GET">
+                <input 
+                    type="search" 
+                    name="q" 
+                    class="search-input" 
+                    placeholder="Aramak istediğiniz PDF aracını yazın..."
+                    aria-label="Site içinde ara"
+                >
+            </form>
+        </div>
+        
+        <div class="popular-links">
+            <h2>🔥 Popüler PDF Araçları</h2>
+            <div class="links-grid">
+                <a href="/pdf-birlestir" class="link-card">
+                    <div class="link-icon">📄</div>
+                    <div class="link-title">PDF Birleştir</div>
+                </a>
+                <a href="/pdf-sikistir" class="link-card">
+                    <div class="link-icon">🗜️</div>
+                    <div class="link-title">PDF Sıkıştır</div>
+                </a>
+                <a href="/pdf-bol" class="link-card">
+                    <div class="link-icon">✂️</div>
+                    <div class="link-title">PDF Böl</div>
+                </a>
+                <a href="/pdf-den-jpg" class="link-card">
+                    <div class="link-icon">🖼️</div>
+                    <div class="link-title">PDF'den JPG</div>
+                </a>
+                <a href="/jpg-den-pdf" class="link-card">
+                    <div class="link-icon">📸</div>
+                    <div class="link-title">JPG'den PDF</div>
+                </a>
+                <a href="/pdf-duzenle" class="link-card">
+                    <div class="link-icon">✏️</div>
+                    <div class="link-title">PDF Düzenle</div>
+                </a>
+            </div>
+        </div>
     </div>
+    
+    <!-- ⭐ Analytics: Track 404 errors -->
+    <script>
+        // Send 404 to analytics
+        if (typeof gtag === 'function') {
+            gtag('event', 'exception', {
+                'description': '404_error',
+                'page_path': window.location.pathname,
+                'fatal': false
+            });
+        }
+        
+        // Log to console for debugging
+        console.error('404 Error:', {
+            path: window.location.pathname,
+            referrer: document.referrer,
+            timestamp: new Date().toISOString()
+        });
+    </script>
 </body>
 </html>
