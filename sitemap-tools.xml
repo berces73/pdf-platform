@@ -1,0 +1,121 @@
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<!--  PDF Birleştir / Merge PDF  -->
+<url>
+<loc>https://siteniz.com/pdf-birlestir</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>1.0</priority>
+<image:image>
+<image:loc>https://siteniz.com/assets/tools/merge-pdf-og.jpg</image:loc>
+<image:title>PDF Birleştir - Ücretsiz Online PDF Birleştirme</image:title>
+</image:image>
+</url>
+<!--  PDF Sıkıştır / Compress PDF  -->
+<url>
+<loc>https://siteniz.com/pdf-sikistir</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>1.0</priority>
+<image:image>
+<image:loc>https://siteniz.com/assets/tools/compress-pdf-og.jpg</image:loc>
+<image:title>PDF Sıkıştır - PDF Boyutunu Küçült</image:title>
+</image:image>
+</url>
+<!--  PDF Böl / Split PDF  -->
+<url>
+<loc>https://siteniz.com/pdf-bol</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>1.0</priority>
+<image:image>
+<image:loc>https://siteniz.com/assets/tools/split-pdf-og.jpg</image:loc>
+<image:title>PDF Böl - PDF Sayfalarını Ayır</image:title>
+</image:image>
+</url>
+<!--  PDF'den JPG / PDF to JPG  -->
+<url>
+<loc>https://siteniz.com/pdf-den-jpg</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+<image:image>
+<image:loc>https://siteniz.com/assets/tools/pdf-to-jpg-og.jpg</image:loc>
+<image:title>PDF'den JPG - PDF'i Resme Çevir</image:title>
+</image:image>
+</url>
+<!--  JPG'den PDF / JPG to PDF  -->
+<url>
+<loc>https://siteniz.com/jpg-den-pdf</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+<image:image>
+<image:loc>https://siteniz.com/assets/tools/jpg-to-pdf-og.jpg</image:loc>
+<image:title>JPG'den PDF - Resmi PDF'e Çevir</image:title>
+</image:image>
+</url>
+<!--  PDF Döndür / Rotate PDF  -->
+<url>
+<loc>https://siteniz.com/pdf-dondur</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+<!--  PDF Sayfa Sil / Delete PDF Pages  -->
+<url>
+<loc>https://siteniz.com/pdf-sayfa-sil</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+<!--  PDF Sayfa Sırala / Reorder PDF Pages  -->
+<url>
+<loc>https://siteniz.com/pdf-sayfa-sirala</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+<!--  PDF Kilitle / Lock PDF  -->
+<url>
+<loc>https://siteniz.com/pdf-kilitle</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<!--  PDF Kilit Aç / Unlock PDF  -->
+<url>
+<loc>https://siteniz.com/pdf-kilit-ac</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<!--  PDF'e QR Kod Ekle / Add QR to PDF  -->
+<url>
+<loc>https://siteniz.com/pdf-qr-kod-ekle</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.6</priority>
+</url>
+<!--  PDF'e Filigran Ekle / Add Watermark to PDF  -->
+<url>
+<loc>https://siteniz.com/pdf-filigran-ekle</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.6</priority>
+</url>
+<!--  PDF Düzenle / Edit PDF  -->
+<url>
+<loc>https://siteniz.com/pdf-duzenle</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<!--  PDF İmzala / Sign PDF  -->
+<url>
+<loc>https://siteniz.com/pdf-imzala</loc>
+<lastmod>2026-02-15T00:00:00+00:00</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+</urlset>
