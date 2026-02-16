@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Çevrimdışı - PDF Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            padding: 20px;
+        }
+        
+        .offline-container {
+            text-align: center;
+            max-width: 500px;
+        }
+        
+        .offline-icon {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .retry-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: #fff;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .cached-pages {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .cached-pages h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+        
+        .cached-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .cached-link {
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #fff;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        
+        .cached-link:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+            
+            .offline-icon {
+                font-size: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">📡</div>
+        <h1>İnternet Bağlantısı Yok</h1>
+        <p>
+            Şu anda çevrimdışısınız. İnternet bağlantınızı kontrol edip tekrar deneyin.
+            PDF Platform'un bazı özellikleri çevrimdışı çalışmaya devam edecektir.
+        </p>
+        
+        <button class="retry-button" onclick="window.location.reload()">
+            🔄 Tekrar Dene
+        </button>
+        
+        <div class="cached-pages">
+            <h2>📦 Önbellekte Mevcut Sayfalar</h2>
+            <div class="cached-links">
+                <a href="/" class="cached-link">🏠 Ana Sayfa</a>
+                <a href="/pdf-birlestir" class="cached-link">📄 PDF Birleştir</a>
+                <a href="/pdf-sikistir" class="cached-link">🗜️ PDF Sıkıştır</a>
+                <a href="/pdf-bol" class="cached-link">✂️ PDF Böl</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Auto-retry when connection is restored
+        window.addEventListener('online', function() {
+            console.log('Connection restored');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        });
+        
+        // Show connection status
+        if (!navigator.onLine) {
+            console.log('Offline mode detected');
+        }
+    </script>
+</body>
+</html>
