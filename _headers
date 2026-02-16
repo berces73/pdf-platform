@@ -1,0 +1,137 @@
+# PDF Platform - Security & Performance Headers
+# Cloudflare Pages Headers Configuration
+
+# ============================================
+# GLOBAL SECURITY HEADERS
+# ============================================
+/*
+  # Security Headers
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  
+  # Content Security Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self';
+  
+  # Permissions Policy
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+  
+  # Performance Headers
+  X-DNS-Prefetch-Control: on
+  
+  # Cache Control (default)
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+# ============================================
+# HTML PAGES - SHORT CACHE
+# ============================================
+/*.html
+  Cache-Control: public, max-age=1800, stale-while-revalidate=3600
+  Content-Type: text/html; charset=utf-8
+
+# ============================================
+# STATIC ASSETS - LONG CACHE
+# ============================================
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: text/css; charset=utf-8
+
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/javascript; charset=utf-8
+
+# ============================================
+# IMAGES - LONG CACHE
+# ============================================
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/jpeg
+
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/jpeg
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/png
+
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/svg+xml
+
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/webp
+
+/*.avif
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/avif
+
+/*.ico
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/x-icon
+
+# ============================================
+# FONTS - LONG CACHE
+# ============================================
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/woff
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/woff2
+
+/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/ttf
+
+/*.eot
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/vnd.ms-fontobject
+
+# ============================================
+# MANIFESTS & CONFIG FILES
+# ============================================
+/manifest.json
+  Cache-Control: public, max-age=86400
+  Content-Type: application/manifest+json
+
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+  Content-Type: application/javascript
+
+/browserconfig.xml
+  Cache-Control: public, max-age=86400
+  Content-Type: application/xml
+
+# ============================================
+# SITEMAPS
+# ============================================
+/sitemap*.xml
+  Cache-Control: public, max-age=3600
+  Content-Type: application/xml
+
+/robots.txt
+  Cache-Control: public, max-age=3600
+  Content-Type: text/plain
+
+# ============================================
+# API ENDPOINTS (if any)
+# ============================================
+/api/*
+  Cache-Control: no-store, no-cache, must-revalidate
+  Content-Type: application/json
+
+# ============================================
+# CORS (if needed for API)
+# ============================================
+/api/*
+  Access-Control-Allow-Origin: https://siteniz.com
+  Access-Control-Allow-Methods: GET, POST, OPTIONS
+  Access-Control-Allow-Headers: Content-Type
+  Access-Control-Max-Age: 86400
