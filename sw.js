@@ -1,10 +1,10 @@
 /**
- * PDF Platform - Advanced Service Worker
- * Version: 2.1.0
- * Features: Offline support, Smart caching, Background sync
+ * PDF Platform - SECURE Service Worker
+ * ⚠️ CRITICAL: Prevents cache poisoning for PDF outputs
+ * Version: 3.1.0 ENTERPRISE
  */
 
-const CACHE_VERSION = 'v2.1.0';
+const CACHE_VERSION = 'v3.1.0';
 const CACHE_NAME = `pdf-platform-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 const IMAGE_CACHE = `images-${CACHE_VERSION}`;
@@ -22,16 +22,47 @@ const PRECACHE_URLS = [
   '/assets/logo.svg'
 ];
 
-// Cache strategies
-const CACHE_STRATEGIES = {
-  CACHE_FIRST: 'cache-first',
-  NETWORK_FIRST: 'network-first',
-  STALE_WHILE_REVALIDATE: 'stale-while-revalidate',
-  NETWORK_ONLY: 'network-only'
-};
+// ⚠️ CRITICAL: URLs that should NEVER be cached
+const NEVER_CACHE_PATTERNS = [
+  /\/pdf-output\//,           // PDF outputs
+  /\/temp-pdfs\//,            // Temporary PDFs
+  /\/api\//,                  // API calls
+  /-temp\.pdf$/,              // Temp PDF files
+  /-output\.pdf$/,            // Output PDF files
+  /\/download\//,             // Download endpoints
+  /sessionid=/,               // Session-specific
+  /timestamp=/,               // Timestamped requests
+  /user=/,                    // User-specific
+  /private\//                 // Private content
+];
+
+// URLs that require fresh data
+const NETWORK_ONLY_PATTERNS = [
+  /\/api\//,
+  /\/auth\//,
+  /\/login/,
+  /\/logout/,
+  /\/profile/,
+  /analytics/,
+  /tracking/
+];
 
 /**
- * Install Event - Precache critical assets
+ * Check if URL should never be cached
+ */
+function shouldNeverCache(url) {
+  return NEVER_CACHE_PATTERNS.some(pattern => pattern.test(url));
+}
+
+/**
+ * Check if URL requires network-only
+ */
+function requiresNetworkOnly(url) {
+  return NETWORK_ONLY_PATTERNS.some(pattern => pattern.test(url));
+}
+
+/**
+ * Install Event
  */
 self.addEventListener('install', event => {
   console.log('[SW] Installing version:', CACHE_VERSION);
@@ -53,7 +84,7 @@ self.addEventListener('install', event => {
 });
 
 /**
- * Activate Event - Clean old caches
+ * Activate Event
  */
 self.addEventListener('activate', event => {
   console.log('[SW] Activating version:', CACHE_VERSION);
@@ -82,85 +113,92 @@ self.addEventListener('activate', event => {
 });
 
 /**
- * Fetch Event - Serve from cache or network based on strategy
+ * Fetch Event - SECURE
  */
 self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
   
-  // Skip non-GET requests
-  if (request.method !== 'GET') return;
+  // ⚠️ CRITICAL: Only handle GET requests
+  if (request.method !== 'GET') {
+    console.log('[SW] 🚫 Non-GET request (not cached):', request.method, url.pathname);
+    return; // Don't cache POST, PUT, DELETE
+  }
   
-  // Skip chrome-extension and other non-http(s) requests
-  if (!url.protocol.startsWith('http')) return;
-  
-  // Skip tracking/analytics requests
-  if (url.hostname.includes('analytics') || 
-      url.hostname.includes('googletagmanager')) {
+  // Skip non-http(s) requests
+  if (!url.protocol.startsWith('http')) {
     return;
   }
   
-  // Determine strategy based on request
-  let strategy = determineStrategy(request, url);
+  // ⚠️ CRITICAL: Never cache sensitive URLs
+  if (shouldNeverCache(url.href)) {
+    console.log('[SW] 🚫 Never cache:', url.pathname);
+    return; // Always fetch from network
+  }
   
+  // Network-only for specific patterns
+  if (requiresNetworkOnly(url.href)) {
+    console.log('[SW] 🌐 Network only:', url.pathname);
+    event.respondWith(fetch(request));
+    return;
+  }
+  
+  // Skip tracking/analytics
+  if (url.hostname.includes('analytics') || 
+      url.hostname.includes('googletagmanager') ||
+      url.hostname.includes('facebook.com') ||
+      url.hostname.includes('google-analytics.com')) {
+    return;
+  }
+  
+  // Determine strategy
+  const strategy = determineStrategy(request, url);
   event.respondWith(handleRequest(request, strategy));
 });
 
 /**
- * Determine caching strategy based on request
+ * Determine caching strategy
  */
 function determineStrategy(request, url) {
-  // API requests - network first
-  if (url.pathname.startsWith('/api/')) {
-    return CACHE_STRATEGIES.NETWORK_FIRST;
-  }
-  
-  // Images - cache first with image cache
+  // Images - cache first
   if (request.destination === 'image') {
-    return CACHE_STRATEGIES.CACHE_FIRST;
+    return 'cache-first';
   }
   
   // Static assets - cache first
   if (request.destination === 'style' || 
       request.destination === 'script' || 
       request.destination === 'font') {
-    return CACHE_STRATEGIES.CACHE_FIRST;
+    return 'cache-first';
   }
   
   // Documents/HTML - network first
   if (request.destination === 'document') {
-    return CACHE_STRATEGIES.NETWORK_FIRST;
+    return 'network-first';
   }
   
   // Default - stale while revalidate
-  return CACHE_STRATEGIES.STALE_WHILE_REVALIDATE;
+  return 'stale-while-revalidate';
 }
 
 /**
- * Handle Request with appropriate strategy
+ * Handle Request
  */
 async function handleRequest(request, strategy) {
   switch (strategy) {
-    case CACHE_STRATEGIES.CACHE_FIRST:
+    case 'cache-first':
       return cacheFirst(request);
-    
-    case CACHE_STRATEGIES.NETWORK_FIRST:
+    case 'network-first':
       return networkFirst(request);
-    
-    case CACHE_STRATEGIES.STALE_WHILE_REVALIDATE:
+    case 'stale-while-revalidate':
       return staleWhileRevalidate(request);
-    
-    case CACHE_STRATEGIES.NETWORK_ONLY:
-      return fetch(request);
-    
     default:
-      return networkFirst(request);
+      return fetch(request);
   }
 }
 
 /**
  * Cache First Strategy
- * Try cache first, fallback to network
  */
 async function cacheFirst(request) {
   const cacheName = request.destination === 'image' ? IMAGE_CACHE : CACHE_NAME;
@@ -174,15 +212,18 @@ async function cacheFirst(request) {
   try {
     const response = await fetch(request);
     
-    if (response.ok) {
-      cache.put(request, response.clone());
+    // ⚠️ SECURITY: Only cache successful responses
+    if (response.ok && response.status === 200) {
+      // ⚠️ SECURITY: Don't cache if response has Set-Cookie
+      if (!response.headers.has('Set-Cookie')) {
+        cache.put(request, response.clone());
+      }
     }
     
     return response;
   } catch (error) {
     console.error('[SW] Cache first failed:', error);
     
-    // Return offline fallback if available
     if (request.destination === 'document') {
       const offlinePage = await cache.match('/offline.html');
       if (offlinePage) return offlinePage;
@@ -190,14 +231,14 @@ async function cacheFirst(request) {
     
     return new Response('Offline - Asset not available', { 
       status: 503,
-      statusText: 'Service Unavailable'
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'text/plain' }
     });
   }
 }
 
 /**
  * Network First Strategy
- * Try network first, fallback to cache
  */
 async function networkFirst(request) {
   const cache = await caches.open(RUNTIME_CACHE);
@@ -205,12 +246,19 @@ async function networkFirst(request) {
   try {
     const response = await fetch(request);
     
-    if (response.ok) {
-      // Don't cache if it's a tracking request
+    // ⚠️ SECURITY: Only cache safe responses
+    if (response.ok && response.status === 200) {
       const url = new URL(request.url);
+      
+      // ⚠️ Don't cache if:
+      // - Has tracking parameters
+      // - Has Set-Cookie
+      // - Is personalized content
       if (!url.search.includes('utm_') && 
           !url.search.includes('fbclid') && 
-          !url.search.includes('gclid')) {
+          !url.search.includes('gclid') &&
+          !response.headers.has('Set-Cookie') &&
+          !response.headers.get('Vary')?.includes('Cookie')) {
         cache.put(request, response.clone());
       }
     }
@@ -225,7 +273,6 @@ async function networkFirst(request) {
       return cached;
     }
     
-    // Return offline page for documents
     if (request.destination === 'document') {
       const offlinePage = await caches.open(CACHE_NAME);
       const offline = await offlinePage.match('/offline.html');
@@ -242,15 +289,19 @@ async function networkFirst(request) {
 
 /**
  * Stale While Revalidate Strategy
- * Return cache immediately, update cache in background
  */
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(RUNTIME_CACHE);
   const cached = await cache.match(request);
   
   const fetchPromise = fetch(request).then(response => {
-    if (response.ok) {
-      cache.put(request, response.clone());
+    if (response.ok && response.status === 200) {
+      // ⚠️ SECURITY: Same checks as above
+      const url = new URL(request.url);
+      if (!url.search.includes('utm_') &&
+          !response.headers.has('Set-Cookie')) {
+        cache.put(request, response.clone());
+      }
     }
     return response;
   }).catch(error => {
@@ -262,7 +313,7 @@ async function staleWhileRevalidate(request) {
 }
 
 /**
- * Background Sync - Queue failed requests
+ * Background Sync
  */
 self.addEventListener('sync', event => {
   console.log('[SW] Background sync:', event.tag);
@@ -274,12 +325,11 @@ self.addEventListener('sync', event => {
 
 async function syncAnalytics() {
   console.log('[SW] Syncing analytics data...');
-  // Placeholder for analytics sync logic
-  // Can be implemented to sync offline analytics
+  // Placeholder for analytics sync
 }
 
 /**
- * Push Notifications (Future Enhancement)
+ * Push Notifications
  */
 self.addEventListener('push', event => {
   const data = event.data ? event.data.json() : {};
@@ -296,14 +346,8 @@ self.addEventListener('push', event => {
       dateOfArrival: Date.now()
     },
     actions: [
-      {
-        action: 'open',
-        title: 'Aç'
-      },
-      {
-        action: 'close',
-        title: 'Kapat'
-      }
+      { action: 'open', title: 'Aç' },
+      { action: 'close', title: 'Kapat' }
     ]
   };
   
@@ -324,20 +368,16 @@ self.addEventListener('notificationclick', event => {
   
   notification.close();
   
-  if (action === 'close') {
-    return;
-  }
+  if (action === 'close') return;
   
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUnmerged: true })
       .then(clientList => {
-        // Check if there's already a window open
         for (let client of clientList) {
           if (client.url === notification.data.url && 'focus' in client) {
             return client.focus();
           }
         }
-        // Open new window
         if (clients.openWindow) {
           return clients.openWindow(notification.data.url);
         }
@@ -346,7 +386,7 @@ self.addEventListener('notificationclick', event => {
 });
 
 /**
- * Message Handler - Communication with main thread
+ * Message Handler
  */
 self.addEventListener('message', event => {
   console.log('[SW] Message received:', event.data);
@@ -374,7 +414,7 @@ self.addEventListener('message', event => {
 });
 
 /**
- * Cache Size Management - Prevent cache overflow
+ * Cache Size Management
  */
 async function limitCacheSize(cacheName, maxItems) {
   const cache = await caches.open(cacheName);
@@ -386,10 +426,43 @@ async function limitCacheSize(cacheName, maxItems) {
   }
 }
 
-// Periodically clean up caches
+// Clean up periodically
 setInterval(() => {
   limitCacheSize(IMAGE_CACHE, 100);
   limitCacheSize(RUNTIME_CACHE, 50);
 }, 3600000); // Every hour
 
-console.log('[SW] Service Worker loaded successfully');
+/**
+ * Error Handler
+ */
+self.addEventListener('error', (event) => {
+  console.error('[SW Error]', event.error);
+  
+  // Send to error tracking
+  fetch('/api/errors/sw', {
+    method: 'POST',
+    body: JSON.stringify({
+      type: 'sw_error',
+      message: event.error.message,
+      stack: event.error.stack,
+      timestamp: new Date().toISOString()
+    }),
+    keepalive: true
+  }).catch(() => {});
+});
+
+self.addEventListener('unhandledrejection', (event) => {
+  console.error('[SW Unhandled Rejection]', event.reason);
+  
+  fetch('/api/errors/sw', {
+    method: 'POST',
+    body: JSON.stringify({
+      type: 'sw_rejection',
+      reason: String(event.reason),
+      timestamp: new Date().toISOString()
+    }),
+    keepalive: true
+  }).catch(() => {});
+});
+
+console.log('[SW] Service Worker loaded successfully (SECURE)');

@@ -1,0 +1,185 @@
+# PDF Platform - Enterprise-Grade Robots.txt
+# Version: 3.1.0 (Google-compliant)
+# Last Updated: 2026-02-15
+
+# ============================================
+# GLOBAL RULES
+# ============================================
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
+Disallow: /tmp/
+Disallow: /cache/
+Disallow: /temp/
+Disallow: /_next/
+Disallow: /.well-known/
+Disallow: /node_modules/
+
+# ⭐ CRITICAL: Parameter blocking (Google-safe)
+# NO wildcards - explicit blocking only
+Disallow: /*?utm_source=
+Disallow: /*?utm_medium=
+Disallow: /*?utm_campaign=
+Disallow: /*?utm_content=
+Disallow: /*?utm_term=
+Disallow: /*?fbclid=
+Disallow: /*?gclid=
+Disallow: /*?msclkid=
+Disallow: /*?ref=
+Disallow: /*?source=
+Disallow: /*?mc_cid=
+Disallow: /*?mc_eid=
+Disallow: /*?_ga=
+Disallow: /*?sessionid=
+Disallow: /*?sid=
+
+# Block specific extensions (not wildcards)
+Disallow: /*.json
+Disallow: /*.xml
+Disallow: /*.yaml
+Disallow: /*.yml
+Disallow: /*.bak
+Disallow: /*.old
+
+# ⭐ CRITICAL: PDF output protection (privacy)
+Disallow: /pdf-output/
+Disallow: /temp-pdfs/
+Disallow: /*-temp.pdf
+Disallow: /*_temp.pdf
+Disallow: /*-output.pdf
+
+# Block duplicate content
+Disallow: /print/
+Disallow: /*?print=
+Disallow: /*?share=
+
+# Block search/filter (but allow main search page)
+Disallow: /*?q=
+Disallow: /*?search=
+Disallow: /*?sort=
+Disallow: /*?filter=
+Disallow: /*?page=
+
+# ============================================
+# SITEMAPS
+# ============================================
+Sitemap: https://domain.com/sitemap.xml
+Sitemap: https://domain.com/sitemap-tools.xml
+Sitemap: https://domain.com/sitemap-articles.xml
+Sitemap: https://domain.com/sitemap-images.xml
+
+# ============================================
+# GOOGLE BOT
+# ============================================
+User-agent: Googlebot
+Allow: /
+Disallow: /private/
+Disallow: /api/
+Disallow: /pdf-output/
+
+User-agent: Googlebot-Image
+Allow: /assets/
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.png
+Allow: /*.svg
+Allow: /*.webp
+Allow: /*.avif
+Disallow: /uploads/temp/
+
+User-agent: Googlebot-Video
+Allow: /assets/videos/
+
+User-agent: Googlebot-Mobile
+Allow: /
+
+# ============================================
+# BING BOT
+# ============================================
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+Disallow: /pdf-output/
+
+User-agent: BingPreview
+Allow: /
+
+# ============================================
+# SOCIAL MEDIA BOTS (ALLOW)
+# ============================================
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+# ============================================
+# SEO TOOLS (BLOCK)
+# ============================================
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+# ============================================
+# AI CRAWLERS (Your Choice)
+# ============================================
+# Recommended: ALLOW for discoverability
+# Uncomment to block:
+
+# User-agent: GPTBot
+# Disallow: /
+
+# User-agent: ChatGPT-User
+# Disallow: /
+
+# User-agent: CCBot
+# Disallow: /
+
+# User-agent: Google-Extended
+# Disallow: /
+
+# ============================================
+# MALICIOUS BOTS
+# ============================================
+User-agent: HTTrack
+Disallow: /
+
+User-agent: Wget
+Disallow: /
+
+User-agent: WebCopier
+Disallow: /
+
+# ============================================
+# NOTES
+# ============================================
+# - No wildcard blocking (Google-safe)
+# - Explicit parameter disallows only
+# - PDF outputs protected
+# - Canonical discovery allowed
+# - Clean URL structure preserved

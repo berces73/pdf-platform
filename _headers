@@ -1,5 +1,5 @@
-# PDF Platform - Security & Performance Headers
-# Cloudflare Pages Headers Configuration
+# PDF Platform - Enterprise Security & Performance Headers
+# Version: 3.1.0 - Production Ready
 
 # ============================================
 # GLOBAL SECURITY HEADERS
@@ -11,8 +11,8 @@
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   
-  # Content Security Policy
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self';
+  # ⭐ Content Security Policy (PDF.js compatible)
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://api.indexnow.org; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';
   
   # Permissions Policy
   Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
@@ -29,6 +29,33 @@
 /*.html
   Cache-Control: public, max-age=1800, stale-while-revalidate=3600
   Content-Type: text/html; charset=utf-8
+
+# ============================================
+# ⚠️ CRITICAL: PDF OUTPUT PROTECTION
+# ============================================
+/pdf-output/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+  Cache-Control: no-store, no-cache, must-revalidate, private
+  Content-Disposition: attachment
+  Content-Type: application/pdf
+
+/temp-pdfs/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, no-cache, must-revalidate, private
+  Content-Type: application/pdf
+
+/*-temp.pdf
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store, no-cache, must-revalidate
+
+/*-output.pdf
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store, no-cache, must-revalidate
+
+/download/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store, no-cache, must-revalidate
+  Content-Disposition: attachment
 
 # ============================================
 # STATIC ASSETS - LONG CACHE
@@ -81,14 +108,17 @@
 /*.woff
   Cache-Control: public, max-age=31536000, immutable
   Content-Type: font/woff
+  Access-Control-Allow-Origin: *
 
 /*.woff2
   Cache-Control: public, max-age=31536000, immutable
   Content-Type: font/woff2
+  Access-Control-Allow-Origin: *
 
 /*.ttf
   Cache-Control: public, max-age=31536000, immutable
   Content-Type: font/ttf
+  Access-Control-Allow-Origin: *
 
 /*.eot
   Cache-Control: public, max-age=31536000, immutable
@@ -121,17 +151,52 @@
   Content-Type: text/plain
 
 # ============================================
-# API ENDPOINTS (if any)
+# API ENDPOINTS
 # ============================================
 /api/*
   Cache-Control: no-store, no-cache, must-revalidate
   Content-Type: application/json
+  X-Robots-Tag: noindex, nofollow
 
 # ============================================
-# CORS (if needed for API)
+# ERROR PAGES
+# ============================================
+/404.html
+  X-Robots-Tag: noindex, nofollow
+
+/500.html
+  X-Robots-Tag: noindex, nofollow
+
+# ============================================
+# CORS (if needed)
 # ============================================
 /api/*
-  Access-Control-Allow-Origin: https://siteniz.com
+  Access-Control-Allow-Origin: https://domain.com
   Access-Control-Allow-Methods: GET, POST, OPTIONS
   Access-Control-Allow-Headers: Content-Type
   Access-Control-Max-Age: 86400
+
+# ============================================
+# SECURITY.TXT (Optional but recommended)
+# ============================================
+/.well-known/security.txt
+  Cache-Control: public, max-age=86400
+  Content-Type: text/plain
+
+# ============================================
+# PRELOAD HEADERS (Performance)
+# ============================================
+/
+  Link: </style.css>; rel=preload; as=style
+  Link: </script.js>; rel=preload; as=script
+  Link: </assets/fonts/inter-var.woff2>; rel=preload; as=font; type=font/woff2; crossorigin
+
+# ============================================
+# NOTES
+# ============================================
+# - PDF outputs strictly noindex
+# - Cache poisoning prevented
+# - CSP allows PDF.js (blob:, worker-src)
+# - Fonts have CORS enabled
+# - Error pages noindexed
+# - Service Worker no-cache

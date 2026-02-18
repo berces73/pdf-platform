@@ -1,31 +1,81 @@
-// ============================================
-// IndexNow - Instant Indexing
-// Supports: Bing, Yandex, Seznam.cz, Naver
-// ============================================
-
 /**
- * IndexNow Key File
- * Save this as: /YOUR_INDEXNOW_KEY.txt
- * Content: YOUR_INDEXNOW_KEY
+ * IndexNow Smart Submission
+ * ENTERPRISE VERSION - Anti-Spam
+ * Only submits changed URLs, prevents duplicate submissions
  */
 
-// Example key (replace with your own):
-// File: /a1b2c3d4e5f6g7h8i9j0.txt
-// Content: a1b2c3d4e5f6g7h8i9j0
-
-/**
- * IndexNow Submission Function
- * Call this after publishing/updating content
- */
-
-const INDEXNOW_KEY = 'YOUR_INDEXNOW_KEY_HERE'; // Replace with your key
-const INDEXNOW_HOST = 'domain.com'; // Your domain
+const INDEXNOW_KEY = 'YOUR_INDEXNOW_KEY_HERE';
+const INDEXNOW_HOST = 'domain.com';
 const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow';
 
+// Storage key for tracking submissions
+const STORAGE_KEY = 'indexnow_submissions';
+const COOLDOWN_HOURS = 24; // Don't resubmit same URL within 24h
+
 /**
- * Submit single URL to IndexNow
+ * Track submitted URLs with timestamp
+ */
+class SubmissionTracker {
+  constructor() {
+    this.load();
+  }
+  
+  load() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      this.submissions = data ? JSON.parse(data) : {};
+    } catch (e) {
+      this.submissions = {};
+    }
+  }
+  
+  save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.submissions));
+    } catch (e) {
+      console.warn('[IndexNow] Storage failed');
+    }
+  }
+  
+  wasRecentlySubmitted(url) {
+    const lastSubmit = this.submissions[url];
+    if (!lastSubmit) return false;
+    
+    const hoursSince = (Date.now() - lastSubmit) / (1000 * 60 * 60);
+    return hoursSince < COOLDOWN_HOURS;
+  }
+  
+  markSubmitted(url) {
+    this.submissions[url] = Date.now();
+    
+    // Clean old entries (older than 7 days)
+    const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    Object.keys(this.submissions).forEach(key => {
+      if (this.submissions[key] < sevenDaysAgo) {
+        delete this.submissions[key];
+      }
+    });
+    
+    this.save();
+  }
+  
+  markBatch(urls) {
+    urls.forEach(url => this.markSubmitted(url));
+  }
+}
+
+const tracker = new SubmissionTracker();
+
+/**
+ * Submit single URL (with deduplication)
  */
 async function submitToIndexNow(url) {
+  // Check if already submitted recently
+  if (tracker.wasRecentlySubmitted(url)) {
+    console.log('[IndexNow] ⏭️ Skipped (recently submitted):', url);
+    return { skipped: true, reason: 'recently_submitted' };
+  }
+  
   const payload = {
     host: INDEXNOW_HOST,
     key: INDEXNOW_KEY,
@@ -42,30 +92,51 @@ async function submitToIndexNow(url) {
       body: JSON.stringify(payload)
     });
 
-    if (response.ok) {
+    if (response.ok || response.status === 202) {
       console.log('[IndexNow] ✅ Submitted:', url);
-      return true;
+      tracker.markSubmitted(url);
+      
+      // Track success
+      if (typeof gtag === 'function') {
+        gtag('event', 'indexnow_submit', {
+          event_category: 'SEO',
+          event_label: url,
+          value: 1
+        });
+      }
+      
+      return { success: true, url };
     } else {
-      console.error('[IndexNow] ❌ Failed:', response.status, response.statusText);
-      return false;
+      console.error('[IndexNow] ❌ Failed:', response.status, url);
+      return { success: false, status: response.status, url };
     }
   } catch (error) {
-    console.error('[IndexNow] ❌ Error:', error);
-    return false;
+    console.error('[IndexNow] ❌ Error:', error, url);
+    return { success: false, error: error.message, url };
   }
 }
 
 /**
- * Submit multiple URLs to IndexNow (batch)
- * Max 10,000 URLs per request
+ * Submit only changed URLs from sitemap
+ * Use this INSTEAD of submitting entire sitemap
  */
-async function submitBatchToIndexNow(urls) {
-  // IndexNow limits: max 10,000 URLs per request
-  const chunks = [];
-  for (let i = 0; i < urls.length; i += 10000) {
-    chunks.push(urls.slice(i, i + 10000));
+async function submitChangedUrls(changedUrls) {
+  // Filter out recently submitted
+  const toSubmit = changedUrls.filter(url => !tracker.wasRecentlySubmitted(url));
+  
+  if (toSubmit.length === 0) {
+    console.log('[IndexNow] ℹ️ No new URLs to submit');
+    return { skipped: changedUrls.length, submitted: 0 };
   }
-
+  
+  console.log(`[IndexNow] 📤 Submitting ${toSubmit.length} changed URLs (${changedUrls.length - toSubmit.length} skipped)`);
+  
+  // IndexNow allows up to 10,000 URLs per request
+  const chunks = [];
+  for (let i = 0; i < toSubmit.length; i += 10000) {
+    chunks.push(toSubmit.slice(i, i + 10000));
+  }
+  
   const results = [];
   for (const chunk of chunks) {
     const payload = {
@@ -74,7 +145,7 @@ async function submitBatchToIndexNow(urls) {
       keyLocation: `https://${INDEXNOW_HOST}/${INDEXNOW_KEY}.txt`,
       urlList: chunk
     };
-
+    
     try {
       const response = await fetch(INDEXNOW_ENDPOINT, {
         method: 'POST',
@@ -83,262 +154,175 @@ async function submitBatchToIndexNow(urls) {
         },
         body: JSON.stringify(payload)
       });
-
-      results.push({
-        success: response.ok,
-        status: response.status,
-        count: chunk.length
-      });
-
-      console.log(`[IndexNow] Batch submitted: ${chunk.length} URLs, Status: ${response.status}`);
+      
+      if (response.ok || response.status === 202) {
+        console.log(`[IndexNow] ✅ Batch submitted: ${chunk.length} URLs`);
+        tracker.markBatch(chunk);
+        results.push({ success: true, count: chunk.length });
+      } else {
+        console.error(`[IndexNow] ❌ Batch failed: ${response.status}`);
+        results.push({ success: false, status: response.status, count: chunk.length });
+      }
     } catch (error) {
-      console.error('[IndexNow] Batch error:', error);
-      results.push({
-        success: false,
-        error: error.message,
-        count: chunk.length
-      });
+      console.error('[IndexNow] ❌ Batch error:', error);
+      results.push({ success: false, error: error.message, count: chunk.length });
+    }
+    
+    // Rate limiting: wait 100ms between chunks
+    if (chunks.length > 1) {
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
   }
-
-  return results;
+  
+  return {
+    submitted: results.filter(r => r.success).reduce((sum, r) => sum + r.count, 0),
+    failed: results.filter(r => !r.success).reduce((sum, r) => sum + r.count, 0),
+    skipped: changedUrls.length - toSubmit.length
+  };
 }
 
 /**
- * Auto-submit on page publish/update
- * Add this to your CMS or build process
+ * ⚠️ ANTI-SPAM: Don't use this on every deploy!
+ * Only use when you have actual URL changes
  */
-function autoSubmitOnPublish() {
-  // Get current page URL
-  const currentUrl = window.location.href;
+async function submitSitemapUrlsSmart(sitemapUrl) {
+  console.warn('[IndexNow] ⚠️ Submitting entire sitemap - use sparingly!');
   
-  // Only submit on production
-  if (window.location.hostname === INDEXNOW_HOST) {
+  try {
+    const response = await fetch(sitemapUrl);
+    const xmlText = await response.text();
+    
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+    const urlElements = xmlDoc.getElementsByTagName('loc');
+    
+    const allUrls = Array.from(urlElements).map(el => el.textContent);
+    
+    // Only submit URLs not recently submitted
+    return await submitChangedUrls(allUrls);
+  } catch (error) {
+    console.error('[IndexNow] Sitemap submission error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * RECOMMENDED: Submit on content publish/update
+ */
+function submitOnPublish() {
+  // Only submit if this is a new/updated page
+  const currentUrl = window.location.href;
+  const isNewPage = document.documentElement.hasAttribute('data-new-page');
+  const isUpdated = document.documentElement.hasAttribute('data-updated');
+  
+  if (isNewPage || isUpdated) {
     submitToIndexNow(currentUrl);
   }
 }
 
 /**
- * Sitemap-based bulk submission
- * Run this after sitemap update
+ * Build-time integration (Node.js)
+ * Add to your CI/CD pipeline
  */
-async function submitSitemapUrls(sitemapUrl) {
-  try {
-    const response = await fetch(sitemapUrl);
-    const xmlText = await response.text();
-    
-    // Parse sitemap XML
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-    const urlElements = xmlDoc.getElementsByTagName('loc');
-    
-    const urls = Array.from(urlElements).map(el => el.textContent);
-    
-    console.log(`[IndexNow] Found ${urls.length} URLs in sitemap`);
-    
-    // Submit in batches
-    return await submitBatchToIndexNow(urls);
-  } catch (error) {
-    console.error('[IndexNow] Sitemap submission error:', error);
-    return false;
-  }
-}
-
-// ============================================
-// USAGE EXAMPLES
-// ============================================
-
-// Example 1: Submit current page
-// submitToIndexNow(window.location.href);
-
-// Example 2: Submit specific URL
-// submitToIndexNow('https://domain.com/pdf-birlestir');
-
-// Example 3: Submit multiple URLs
-// const urls = [
-//   'https://domain.com/',
-//   'https://domain.com/pdf-birlestir',
-//   'https://domain.com/pdf-sikistir'
-// ];
-// submitBatchToIndexNow(urls);
-
-// Example 4: Submit all URLs from sitemap
-// submitSitemapUrls('https://domain.com/sitemap.xml');
-
-// ============================================
-// CLOUDFLARE WORKER INTEGRATION
-// ============================================
-
-/**
- * Cloudflare Worker for automatic IndexNow submission
- * Deploy this as a Worker and trigger on content changes
- */
-
 /*
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
-
-async function handleRequest(request) {
-  // Only handle POST requests to /api/indexnow
-  if (request.method !== 'POST' || !request.url.includes('/api/indexnow')) {
-    return new Response('Not Found', { status: 404 })
-  }
-
-  const { url } = await request.json()
-
-  if (!url) {
-    return new Response('Missing URL', { status: 400 })
-  }
-
-  // Submit to IndexNow
-  const indexNowResponse = await fetch('https://api.indexnow.org/indexnow', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      host: 'domain.com',
-      key: 'YOUR_KEY',
-      keyLocation: 'https://domain.com/YOUR_KEY.txt',
-      urlList: [url]
-    })
-  })
-
-  return new Response(
-    JSON.stringify({ 
-      success: indexNowResponse.ok,
-      status: indexNowResponse.status 
-    }),
-    { 
-      headers: { 'Content-Type': 'application/json' },
-      status: indexNowResponse.status 
-    }
-  )
-}
-*/
-
-// ============================================
-// NODE.JS / BUILD SCRIPT INTEGRATION
-// ============================================
-
-/**
- * Submit URLs during build/deployment
- * Add to package.json scripts:
- * "postbuild": "node scripts/indexnow-submit.js"
- */
-
-/*
-// scripts/indexnow-submit.js
-const fetch = require('node-fetch');
+// build-scripts/indexnow-deploy.js
 const fs = require('fs');
+const fetch = require('node-fetch');
 
-const INDEXNOW_KEY = process.env.INDEXNOW_KEY;
-const DOMAIN = process.env.DOMAIN;
-
-async function submitBuiltPages() {
-  // Read sitemap or build output
-  const sitemap = fs.readFileSync('./dist/sitemap.xml', 'utf8');
+async function submitChangedPages() {
+  // Read your build manifest or git diff
+  const changedFiles = getChangedFiles(); // Your implementation
   
-  // Extract URLs
-  const urlMatches = sitemap.match(/<loc>(.*?)<\/loc>/g);
-  const urls = urlMatches.map(match => 
-    match.replace(/<\/?loc>/g, '')
-  );
-
-  // Submit to IndexNow
+  const changedUrls = changedFiles
+    .filter(f => f.endsWith('.html'))
+    .map(f => `https://domain.com${f.replace('dist', '').replace('.html', '')}`);
+  
+  if (changedUrls.length === 0) {
+    console.log('No changed URLs to submit');
+    return;
+  }
+  
+  console.log(`Submitting ${changedUrls.length} changed URLs...`);
+  
   const response = await fetch('https://api.indexnow.org/indexnow', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      host: DOMAIN,
-      key: INDEXNOW_KEY,
-      keyLocation: `https://${DOMAIN}/${INDEXNOW_KEY}.txt`,
-      urlList: urls
+      host: 'domain.com',
+      key: process.env.INDEXNOW_KEY,
+      keyLocation: `https://domain.com/${process.env.INDEXNOW_KEY}.txt`,
+      urlList: changedUrls
     })
   });
-
-  console.log(`IndexNow submission: ${response.status}`);
-  console.log(`Submitted ${urls.length} URLs`);
+  
+  console.log(`IndexNow: ${response.status} - ${changedUrls.length} URLs`);
 }
 
-submitBuiltPages();
+submitChangedPages();
 */
 
-// ============================================
-// MONITORING & ANALYTICS
-// ============================================
-
 /**
- * Track IndexNow submissions
+ * Cloudflare Worker Integration
  */
-function trackIndexNowSubmission(url, success) {
-  if (typeof gtag === 'function') {
-    gtag('event', 'indexnow_submit', {
-      event_category: 'SEO',
-      event_label: url,
-      value: success ? 1 : 0
+/*
+// workers/indexnow.js
+export default {
+  async scheduled(event, env, ctx) {
+    // Get changed URLs from KV storage
+    const changedUrls = await env.CHANGED_URLS.get('urls', 'json') || [];
+    
+    if (changedUrls.length === 0) return;
+    
+    await fetch('https://api.indexnow.org/indexnow', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        host: 'domain.com',
+        key: env.INDEXNOW_KEY,
+        keyLocation: `https://domain.com/${env.INDEXNOW_KEY}.txt`,
+        urlList: changedUrls
+      })
     });
+    
+    // Clear after submission
+    await env.CHANGED_URLS.put('urls', JSON.stringify([]));
   }
 }
 
-// ============================================
-// RATE LIMITING
-// ============================================
+// Trigger: Cron schedule (0 0 * * *) - daily at midnight
+*/
 
 /**
- * IndexNow rate limits:
- * - Max 10,000 URLs per request
- * - No explicit rate limit, but be reasonable
- * - Recommended: Don't submit same URL more than once per day
+ * Analytics Dashboard Data
  */
-
-class IndexNowQueue {
-  constructor() {
-    this.queue = new Set();
-    this.submitted = new Map();
-  }
-
-  add(url) {
-    // Check if already submitted in last 24 hours
-    const lastSubmit = this.submitted.get(url);
-    if (lastSubmit && Date.now() - lastSubmit < 86400000) {
-      console.log('[IndexNow] Skipping (already submitted today):', url);
-      return false;
-    }
-
-    this.queue.add(url);
-    return true;
-  }
-
-  async flush() {
-    if (this.queue.size === 0) return;
-
-    const urls = Array.from(this.queue);
-    const success = await submitBatchToIndexNow(urls);
-
-    if (success) {
-      const now = Date.now();
-      urls.forEach(url => {
-        this.submitted.set(url, now);
-        this.queue.delete(url);
-      });
-    }
-
-    return success;
-  }
+function getSubmissionStats() {
+  const submissions = tracker.submissions;
+  const urls = Object.keys(submissions);
+  
+  return {
+    totalSubmissions: urls.length,
+    last24h: urls.filter(url => 
+      (Date.now() - submissions[url]) < 24 * 60 * 60 * 1000
+    ).length,
+    last7days: urls.filter(url => 
+      (Date.now() - submissions[url]) < 7 * 24 * 60 * 60 * 1000
+    ).length,
+    oldestSubmission: Math.min(...Object.values(submissions)),
+    newestSubmission: Math.max(...Object.values(submissions))
+  };
 }
 
-// Usage
-// const queue = new IndexNowQueue();
-// queue.add('https://domain.com/new-page');
-// await queue.flush();
+// Initialize on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', submitOnPublish);
+} else {
+  submitOnPublish();
+}
 
 export {
   submitToIndexNow,
-  submitBatchToIndexNow,
-  submitSitemapUrls,
-  autoSubmitOnPublish,
-  IndexNowQueue,
-  trackIndexNowSubmission
+  submitChangedUrls,
+  submitSitemapUrlsSmart,
+  SubmissionTracker,
+  getSubmissionStats
 };
