@@ -1,4 +1,5 @@
-﻿import { consumeCredit, refreshCreditInfo } from "./consume-credit.js";
+﻿// public/assets/js/tools-registry.js
+import { consumeCredit, refreshCreditInfo } from "./consume-credit.js";
 
 const SOFT_MODE = true; // false yaparsan click'ten önce kredi keser (hard mode)
 
@@ -11,13 +12,12 @@ function ready(fn) {
 }
 
 ready(async () => {
-  // 1) credit ui initial refresh (tek sefer)
+  // 1) credit ui initial refresh
   refreshCreditInfo?.().catch(() => {});
 
   // 2) tool cards
   const cards = Array.from(document.querySelectorAll(".tool-card[data-tool]"));
 
-  // title/tooltip
   for (const a of cards) {
     const tool = a.getAttribute("data-tool");
     if (tool && !a.title) a.title = `Aracı aç: ${tool}`;
@@ -25,14 +25,16 @@ ready(async () => {
 
   if (SOFT_MODE) return;
 
-  // Hard mode: click capture
   const handlers = new WeakMap();
 
   for (const a of cards) {
     const handler = async (e) => {
-      const tool = a.getAttribute("data-tool") || "unknown";
+      const tool = a.getAttribute("data-tool");
+      if (!tool) return;
+
       try {
-        const ok = await consumeCredit(tool, 1);
+        // ✅ cost kaldırıldı, sadece tool gönderiyoruz
+        const ok = await consumeCredit(tool);
         if (!ok) {
           e.preventDefault();
           e.stopPropagation();
@@ -49,7 +51,6 @@ ready(async () => {
     a.addEventListener("click", handler, { capture: true });
   }
 
-  // cleanup (non-SPA için şart değil ama temiz)
   window.addEventListener("beforeunload", () => {
     for (const a of cards) {
       const handler = handlers.get(a);

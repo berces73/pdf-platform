@@ -1,18 +1,19 @@
 ﻿name = "pdf-platform-api"
-main = "_worker.js"
-compatibility_date = "2025-01-01"
+main = "src/index.js"
+compatibility_date = "2026-02-20"
 
-[durable_objects]
-bindings = [
-  { name = "CREDIT_COUNTER", class_name = "CreditCounter" }
-]
+[[durable_objects.bindings]]
+name = "CREDIT_COUNTER"
+class_name = "CreditCounter"
 
 [[migrations]]
 tag = "v1"
-new_sqlite_classes = ["CreditCounter"]
+new_classes = ["CreditCounter"]
 
 [vars]
+ALLOWED_ORIGIN = "https://pdf-platform.pages.dev"
 FREE_DAILY_CREDITS = "20"
-PRO_DAILY_CREDITS  = "200"
-ALLOWED_ORIGIN = "https://pdf-platform.pages.dev,https://pdf-platform.com"
-
+PRO_DAILY_CREDITS = "200"
+RATE_LIMIT_PER_MIN = "60"
+RATE_LIMIT_WINDOW_SEC = "60"
+TOOL_COSTS = '{"merge":1,"compress":1,"split":1,"convert":2,"watermark":1,"rotate":1,"unlock":3,"protect":2,"extract":1,"reorder":1}'

@@ -1,7 +1,6 @@
-// public/assets/js/paywall.js
-// Minimal paywall modal. Zero framework.
-
+// FILE: assets/js/paywall.js
 let _state = { isOpen: false };
+let _els = null;
 
 function ensureStyles() {
   if (document.getElementById("__paywall_styles")) return;
@@ -28,6 +27,7 @@ function ensureStyles() {
 
 function ensureDOM() {
   ensureStyles();
+
   let overlay = document.getElementById("__paywall");
   if (overlay) return overlay;
 
@@ -66,28 +66,33 @@ function ensureDOM() {
     if (e.key === "Escape" && _state.isOpen) closePaywall();
   });
 
-  // default primary action: go to pricing (you can change later)
   document.getElementById("__pw_primary")?.addEventListener("click", () => {
-    // Eğer ileride pricing sayfan varsa burayı değiştir
     window.location.href = "/#pricing";
   });
+
+  _els = {
+    overlay,
+    title: document.getElementById("__pw_title"),
+    body: document.getElementById("__pw_body"),
+    note: document.getElementById("__pw_note"),
+  };
 
   return overlay;
 }
 
-function messageForReason(reason, tier) {
+function messageForReason(reason, tier, extra = {}) {
   switch (reason) {
     case "credits":
       return {
         title: "Kredi bitti",
-        body: `Bu işlem için kredin yetersiz. ${tier ? `Plan: ${tier}` : ""}`.trim(),
-        note: "Kredi sistemi aktifse plan yükseltmen gerekebilir.",
+        body: `Bu işlem için kredin yetersiz.${tier ? ` Plan: ${tier}` : ""}`.trim(),
+        note: extra?.resetAt ? `Sıfırlanma: ${extra.resetAt}` : "Plan yükseltmen gerekebilir.",
       };
     case "rate_limit":
       return {
         title: "Çok hızlı denedin",
         body: "Kısa sürede çok istek gönderdin. Biraz bekleyip tekrar dene.",
-        note: "Rate limit koruması devrede.",
+        note: extra?.retryAfter ? `Tekrar dene: ~${extra.retryAfter}s` : "Rate limit koruması devrede.",
       };
     case "network":
       return {
@@ -104,24 +109,19 @@ function messageForReason(reason, tier) {
   }
 }
 
-export function openPaywall({ reason = "error", tier = null } = {}) {
-  const overlay = ensureDOM();
-  const msg = messageForReason(reason, tier);
+export function openPaywall({ reason = "error", tier = null, retryAfter = null, resetAt = null } = {}) {
+  ensureDOM();
+  const msg = messageForReason(reason, tier, { retryAfter, resetAt });
 
-  const titleEl = document.getElementById("__pw_title");
-  const bodyEl = document.getElementById("__pw_body");
-  const noteEl = document.getElementById("__pw_note");
+  _els?.title && (_els.title.textContent = msg.title);
+  _els?.body && (_els.body.textContent = msg.body);
+  _els?.note && (_els.note.textContent = msg.note || "");
 
-  if (titleEl) titleEl.textContent = msg.title;
-  if (bodyEl) bodyEl.textContent = msg.body;
-  if (noteEl) noteEl.textContent = msg.note || "";
-
-  overlay.classList.add("pw-show");
+  _els?.overlay?.classList.add("pw-show");
   _state.isOpen = true;
 }
 
 export function closePaywall() {
-  const overlay = document.getElementById("__paywall");
-  overlay?.classList.remove("pw-show");
+  document.getElementById("__paywall")?.classList.remove("pw-show");
   _state.isOpen = false;
 }

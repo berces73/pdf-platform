@@ -1,3 +1,4 @@
+// FILE: functions/_utils/response.js
 import { getCorsHeaders } from "./cors.js";
 
 const BASE_HEADERS = {
@@ -11,7 +12,13 @@ export function json(data, status = 200, extraHeaders = {}, request = null) {
     ...(request ? getCorsHeaders(request) : {}),
     ...extraHeaders,
   };
-  return new Response(JSON.stringify(data), { status, headers });
+
+  const body =
+    data && typeof data === "object" && !Array.isArray(data) && !("ok" in data)
+      ? { ok: true, ...data }
+      : data;
+
+  return new Response(JSON.stringify(body), { status, headers });
 }
 
 export function error(

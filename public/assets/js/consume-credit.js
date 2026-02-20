@@ -27,6 +27,20 @@ export function newOpId() {
   }
 }
 
+// ✅ Stable Device ID (auto)
+function getDeviceId() {
+  try {
+    let id = localStorage.getItem("__did");
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem("__did", id);
+    }
+    return id;
+  } catch {
+    return null;
+  }
+}
+
 async function fetchWithTimeout(url, options = {}, timeoutMs = TIMEOUT_MS) {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), timeoutMs);
@@ -41,7 +55,6 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = TIMEOUT_MS) {
   }
 }
 
-// ✅ TLS/Network detection (CORS removed)
 function isNetworkOrTlsError(err) {
   const msg = String(err?.message || err || "");
   return (
@@ -50,13 +63,22 @@ function isNetworkOrTlsError(err) {
   );
 }
 
+// ✅ credit display cache (boşsa yeniden tara)
+let _creditEls = null;
+function getCreditEls() {
+  if (!_creditEls || _creditEls.length === 0) {
+    _creditEls = Array.from(document.querySelectorAll("[data-credit-display]"));
+  }
+  return _creditEls;
+}
+
 function updateCreditDisplay(remaining) {
-  const els = document.querySelectorAll("[data-credit-display]");
-  els.forEach((el) => {
+  const els = getCreditEls();
+  for (const el of els) {
     el.textContent = String(remaining);
     if (remaining <= 5) el.classList.add("credit-low");
     else el.classList.remove("credit-low");
-  });
+  }
 }
 
 // ================================
@@ -72,6 +94,7 @@ class ApiBaseManager {
   }
 
   getStoredBase() {
+    // ⚠️ Debug amaçlı. İstersen production'da tamamen kapat.
     try {
       const v = localStorage.getItem("API_BASE");
       if (v && /^https:\/\/[a-z0-9.-]+/i.test(v)) return v.replace(/\/+$/, "");
@@ -84,7 +107,7 @@ class ApiBaseManager {
   }
 
   shouldRecheck() {
-    return !this.checked || (Date.now() - this.lastCheckTime > this.checkInterval);
+    return !this.checked || Date.now() - this.lastCheckTime > this.checkInterval;
   }
 
   // ✅ Always probe PRIMARY to recover from fallback
@@ -99,35 +122,33 @@ class ApiBaseManager {
 
     if (!this.shouldRecheck()) return this.current;
 
-    // ✅ Probe PRIMARY WITHOUT credentials (avoid silent cookie identity side effects)
     const probe = async () => {
       const resp = await fetchWithTimeout(
         `${PRIMARY_API_BASE}/api/credits/status`,
         {
           method: "GET",
-          credentials: "omit", // 🔴 important
-          headers: { "Accept": "application/json" },
+          mode: "cors",
+          credentials: "omit",
+          headers: { Accept: "application/json" },
         },
         4000
       );
-      void resp; // any response means TLS/DNS works
+      void resp;
     };
 
     try {
       await probe();
       this.current = PRIMARY_API_BASE;
-      this.checked = true;
-      this.lastCheckTime = Date.now();
-      return this.current;
     } catch (e) {
       if (isNetworkOrTlsError(e)) {
         console.warn("[API] PRIMARY unreachable. Using fallback.");
         this.current = FALLBACK_API_BASE;
-        this.checked = true;
-        this.lastCheckTime = Date.now();
       }
-      return this.current;
     }
+
+    this.checked = true;
+    this.lastCheckTime = Date.now();
+    return this.current;
   }
 
   switchToFallback() {
@@ -156,12 +177,15 @@ const apiManager = new ApiBaseManager();
 // ================================
 // Main API Functions
 // ================================
-export async function consumeCredit(tool, cost = 1, opId = newOpId()) {
+// ✅ cost artık gönderilmiyor (server hesaplıyor)
+export async function consumeCredit(tool, opId = newOpId()) {
   await apiManager.ensureReady();
 
+  const deviceId = getDeviceId();
   const headers = {
     "Content-Type": "application/json",
-    "Accept": "application/json",
+    Accept: "application/json",
+    ...(deviceId ? { "X-Device-ID": deviceId } : {}),
   };
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -172,9 +196,10 @@ export async function consumeCredit(tool, cost = 1, opId = newOpId()) {
         consume,
         {
           method: "POST",
+          mode: "cors",
           headers,
           credentials: "include",
-          body: JSON.stringify({ tool, cost, opId }),
+          body: JSON.stringify({ tool, opId }),
         },
         TIMEOUT_MS
       );
@@ -197,7 +222,7 @@ export async function consumeCredit(tool, cost = 1, opId = newOpId()) {
 
       if (resp.status === 429 || code === "RATE_LIMITED") {
         const retryAfter = resp.headers.get("Retry-After");
-        const waitTime = retryAfter ? `${retryAfter} saniye` : "bir süre";
+        const waitTime = retryAfter ? `${retryAfter} saniye` : "kısa bir süre";
         window.toast?.(`Çok fazla istek. ${waitTime} bekleyin.`, "warning", 6000);
         openPaywall({ reason: "rate_limit", retryAfter });
         return false;
@@ -237,9 +262,7 @@ export async function consumeCredit(tool, cost = 1, opId = newOpId()) {
     } catch (e) {
       if (isNetworkOrTlsError(e)) {
         console.warn("[consume-credit] Network/TLS error:", e.message);
-
         if (apiManager.getCurrent() === PRIMARY_API_BASE && attempt === 0) {
-          console.warn("[consume-credit] Switching to fallback");
           apiManager.switchToFallback();
           continue;
         }
@@ -270,12 +293,15 @@ export async function refreshCreditInfo() {
     await apiManager.ensureReady();
     const { status } = apiManager.getEndpoints();
 
+    const deviceId = getDeviceId();
+
     const resp = await fetchWithTimeout(
       status,
       {
         method: "GET",
+        mode: "cors",
         credentials: "include",
-        headers: { "Accept": "application/json" },
+        headers: { Accept: "application/json", ...(deviceId ? { "X-Device-ID": deviceId } : {}) },
       },
       5000
     );
@@ -298,9 +324,16 @@ export async function refreshCreditInfo() {
 
         try {
           const { status } = apiManager.getEndpoints();
+          const deviceId = getDeviceId();
+
           const resp = await fetchWithTimeout(
             status,
-            { method: "GET", credentials: "include" },
+            {
+              method: "GET",
+              mode: "cors",
+              credentials: "include",
+              headers: { Accept: "application/json", ...(deviceId ? { "X-Device-ID": deviceId } : {}) },
+            },
             5000
           );
 
