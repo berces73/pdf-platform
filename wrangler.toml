@@ -1,0 +1,17 @@
+﻿name = "pdf-platform-api"
+main = "_worker.js"
+compatibility_date = "2025-01-01"
+
+[durable_objects]
+bindings = [
+  { name = "CREDIT_COUNTER", class_name = "CreditCounter" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["CreditCounter"]
+
+[vars]
+FREE_DAILY_CREDITS = "20"
+PRO_DAILY_CREDITS  = "9999"
+ALLOWED_ORIGIN = "https://pdf-platform.com"
