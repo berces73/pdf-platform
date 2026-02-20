@@ -9,9 +9,10 @@ bindings = [
 
 [[migrations]]
 tag = "v1"
-new_classes = ["CreditCounter"]
+new_sqlite_classes = ["CreditCounter"]
 
 [vars]
 FREE_DAILY_CREDITS = "20"
-PRO_DAILY_CREDITS  = "9999"
-ALLOWED_ORIGIN = "https://pdf-platform.com"
+PRO_DAILY_CREDITS  = "200"
+ALLOWED_ORIGIN = "https://pdf-platform.pages.dev,https://pdf-platform.com"
+
